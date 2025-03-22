@@ -1,0 +1,85 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+  padding-top: 3rem;
+  text-align: center;
+}
+
+/* Custom CSS for Foody app */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card hover effects */
+.card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Animated elements */
+.btn-danger {
+  background-color: #ff6b6b;
+  border-color: #ff6b6b;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #ff5252;
+  border-color: #ff5252;
+  transform: scale(1.05);
+}
+
+.btn-outline-danger {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.btn-outline-danger:hover {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+/* Text colors */
+.text-danger {
+  color: #ff6b6b !important;
+}
+
+/* Logo and branding */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #ff6b6baa);
+}
+
+/* Other customizations from original CSS */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.read-the-docs {
+  color: #888;
+}
