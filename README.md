@@ -2,7 +2,7 @@
 
 A modern, responsive food delivery application built with React and Bootstrap.
 
-![Foody App Banner](https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=200&h=200&auto=format&fit=crop)
+![Foody App Banner](https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=700&h=200&auto=format&fit=crop)
 
 ## 🍕 Features
 
