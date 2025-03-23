@@ -1,5 +1,5 @@
 // import React from 'react'
-
+import PropTypes from 'prop-types';
 function Navbar({ setCurrentPage }) {
   return (
     <><nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
@@ -15,24 +15,26 @@ function Navbar({ setCurrentPage }) {
       <div className="collapse navbar-collapse" id="navbarScroll">
         <ul className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ "--bs-scroll-height": "100px" }}>
           <li className="nav-item">
-            <a className="nav-link active" aria-current="page" href="#" onClick={() => setCurrentPage('home')}>Home</a>
+            <a className="nav-link" aria-current="page" href="#" onClick={() => setCurrentPage('home')}>Home</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#">Restaurants</a>
+            <a className="nav-link" href="#" onClick={() => setCurrentPage('restaurants')}>Restaurants</a>
           </li>
           <li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Categories
             </a>
             <ul className="dropdown-menu">
+              <li><a className="dropdown-item" href="#" onClick={() => setCurrentPage('categories')}>All Categories</a></li>
+              <li><hr className="dropdown-divider"/></li>
               <li><a className="dropdown-item" href="#">Pizza</a></li>
               <li><a className="dropdown-item" href="#">Burgers</a></li>
-              <li><hr className="dropdown-divider"/></li>
-              <li><a className="dropdown-item" href="#">View All</a></li>
+              <li><a className="dropdown-item" href="#">Sushi</a></li>
+              <li><a className="dropdown-item" href="#">Desserts</a></li>
             </ul>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#">My Orders</a>
+            <a className="nav-link" href="#" onClick={() => setCurrentPage('myorders')}>My Orders</a>
           </li>
         </ul>
         <div className="d-flex align-items-center">
@@ -49,5 +51,9 @@ function Navbar({ setCurrentPage }) {
   </nav></>
   ) 
 }
+
+Navbar.propTypes = {
+  setCurrentPage: PropTypes.func.isRequired
+};
 
 export default Navbar
