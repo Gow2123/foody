@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+
 function FoodCards() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ function FoodCards() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/products');
+        const response = await fetch(`${BACKEND_URL}/products`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }

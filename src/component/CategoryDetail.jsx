@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+
 function CategoryDetail({ addToCart }) {
   const { id } = useParams();
   const [category, setCategory] = useState(null);
@@ -13,8 +15,8 @@ function CategoryDetail({ addToCart }) {
     const fetchCategoryAndProducts = async () => {
       try {
         const [categoryResponse, productsResponse] = await Promise.all([
-          fetch(`http://localhost:3000/products/category/${id}`),
-          fetch(`http://localhost:3000/products/category/${id}/products`)
+          fetch(`${BACKEND_URL}/products/category/${id}`),
+          fetch(`${BACKEND_URL}/products/category/${id}/products`)
         ]);
 
         if (!categoryResponse.ok || !productsResponse.ok) {

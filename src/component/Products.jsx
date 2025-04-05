@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3000');
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+const socket = io(BACKEND_URL, {
+  transports: ['polling'] // Keep polling for consistency
+});
 
 function Products({ addToCart }) {
   const [allProducts, setAllProducts] = useState([]); // Raw list from fetch/socket
@@ -22,8 +25,8 @@ function Products({ addToCart }) {
     const fetchData = async () => {
       try {
         const [productsRes, categoriesRes] = await Promise.all([
-          fetch('http://localhost:3000/products'),
-          fetch('http://localhost:3000/products/categories')
+          fetch(`${BACKEND_URL}/products`),
+          fetch(`${BACKEND_URL}/products/categories`)
         ]);
 
         if (!productsRes.ok) throw new Error('Failed to fetch products');

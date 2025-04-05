@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+
 function Signup({ setIsLoggedIn }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -30,7 +32,7 @@ function Signup({ setIsLoggedIn }) {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/register', {
+      const response = await fetch(`${BACKEND_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

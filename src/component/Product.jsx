@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+
 function Product({ addToCart }) {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -12,7 +14,7 @@ function Product({ addToCart }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/products/${id}`);
+        const response = await fetch(`${BACKEND_URL}/products/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }

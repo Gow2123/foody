@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+
 function RestaurantDetail({ addToCart }) {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
@@ -13,8 +15,8 @@ function RestaurantDetail({ addToCart }) {
     const fetchRestaurantAndProducts = async () => {
       try {
         const [restaurantResponse, productsResponse] = await Promise.all([
-          fetch(`http://localhost:3000/products/restaurant/${id}`),
-          fetch(`http://localhost:3000/products/restaurant/${id}/products`)
+          fetch(`${BACKEND_URL}/products/restaurant/${id}`),
+          fetch(`${BACKEND_URL}/products/restaurant/${id}/products`)
         ]);
 
         if (!restaurantResponse.ok || !productsResponse.ok) {

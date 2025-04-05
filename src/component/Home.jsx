@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+
 function Home({ addToCart }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -10,13 +12,13 @@ function Home({ addToCart }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchAllData = async () => {
+    const fetchHomePageData = async () => {
       try {
         // Fetch products, categories, and restaurants in parallel
         const [productsRes, categoriesRes, restaurantsRes] = await Promise.all([
-          fetch('http://localhost:3000/products'),
-          fetch('http://localhost:3000/products/categories'),
-          fetch('http://localhost:3000/products/restaurants')
+          fetch(`${BACKEND_URL}/products`),
+          fetch(`${BACKEND_URL}/products/categories`),
+          fetch(`${BACKEND_URL}/products/restaurants`)
         ]);
 
         if (!productsRes.ok) throw new Error('Failed to fetch products');
@@ -42,7 +44,7 @@ function Home({ addToCart }) {
       }
     };
 
-    fetchAllData();
+    fetchHomePageData();
   }, []);
 
   const handleQuickAdd = (product) => {

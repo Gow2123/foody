@@ -84,3 +84,8 @@ foody/
 *   Bootstrap - For responsive design components
 *   React - For the UI library
 *   Vite - For the build tool and dev server
+
+### Deployment
+
+- **Frontend:** https://foody-mern.vercel.app/
+- **Backend:** https://foody-backend0.vercel.app/

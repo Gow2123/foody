@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,8 +16,8 @@ function Categories() {
       try {
         // Fetch categories and products in parallel
         const [categoriesRes, productsRes] = await Promise.all([
-          fetch('http://localhost:3000/products/categories'),
-          fetch('http://localhost:3000/products')
+          fetch(`${BACKEND_URL}/products/categories`),
+          fetch(`${BACKEND_URL}/products`)
         ]);
 
         if (!categoriesRes.ok) {
