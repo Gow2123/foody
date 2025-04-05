@@ -1,1 +1,16 @@
- 
+{
+  "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "YOUR_FOODY_ADMIN_DEPLOYMENT_URL"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "YOUR_FOODY_ADMIN_DEPLOYMENT_URL/$1"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
+} 
