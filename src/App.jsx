@@ -15,6 +15,7 @@ import CategoryDetail from './component/CategoryDetail'
 import Signup from './component/Signup'
 import Login from './component/Login'
 import Products from './component/Products'
+import AdminProducts from './component/AdminProducts'
 
 function App() {  
   const [cart, setCart] = useState([])
@@ -133,6 +134,7 @@ function App() {
               } 
             />
             <Route path="/products" element={<Products addToCart={addToCart} />} />
+            <Route path="/admin" element={<AdminProducts />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
