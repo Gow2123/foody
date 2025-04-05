@@ -2,11 +2,11 @@
 
 This repository contains the customer-facing frontend for the Foody application, a modern, responsive food delivery platform built with React.
 
-**Live Deployment:** [foody-mern.vercel.app](https://foody-mern.vercel.app/)
+**Live Deployment:** [https://foody-mern.vercel.app/](https://foody-mern.vercel.app/)
 
 **Related Repositories:**
-*   Backend API Server: [Gow2123/foody-backend](https://github.com/Gow2123/foody-backend)
-*   Admin Frontend: [Gow2123/foody-admin](https://github.com/Gow2123/foody-admin)
+*   Backend API Server: [Gow2123/foody-backend](https://github.com/Gow2123/foody-backend) (Deployed: [https://foody-backend0.vercel.app/](https://foody-backend0.vercel.app/))
+*   Admin Frontend: [Gow2123/foody-admin](https://github.com/Gow2123/foody-admin) (Deployed: [https://foody-admin0.vercel.app/](https://foody-admin0.vercel.app/))
 
 ## 🍕 Features
 

@@ -1,4 +1,5 @@
 // src/config.js
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+// Use environment variable for backend URL, fallback to deployed URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app/';
 
 export default BACKEND_URL; 

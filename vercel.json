@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/admin",
-      "destination": "YOUR_FOODY_ADMIN_DEPLOYMENT_URL"
+      "destination": "https://foody-admin0.vercel.app/"
     },
     {
       "source": "/admin/(.*)",
-      "destination": "YOUR_FOODY_ADMIN_DEPLOYMENT_URL/$1"
+      "destination": "https://foody-admin0.vercel.app/$1"
     },
     {
       "source": "/((?!api/).*)",
