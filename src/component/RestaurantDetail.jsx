@@ -23,27 +23,37 @@ function RestaurantDetail({ addToCart }) {
   useEffect(() => {
     const fetchRestaurantAndProducts = async () => {
       try {
-        const [restaurantResponse, productsResponse] = await Promise.all([
-          fetch(`${BACKEND_URL}/products/restaurant/${id}`),
-          fetch(`${BACKEND_URL}/products/restaurant/${id}/products`)
-        ]);
-
-        if (!restaurantResponse.ok || !productsResponse.ok) {
-          throw new Error('Failed to fetch restaurant data');
+        // Add error logging to see exactly what's failing
+        console.log("Fetching restaurant data from:", `${BACKEND_URL}/products/restaurant/${id}`);
+        
+        const restaurantResponse = await fetch(`${BACKEND_URL}/products/restaurant/${id}`);
+        if (!restaurantResponse.ok) {
+          console.error("Restaurant fetch failed:", restaurantResponse.status);
+          throw new Error(`Failed to fetch restaurant: ${restaurantResponse.status}`);
+        }
+        
+        console.log("Fetching products from:", `${BACKEND_URL}/products/restaurant/${id}/products`);
+        const productsResponse = await fetch(`${BACKEND_URL}/products/restaurant/${id}/products`);
+        if (!productsResponse.ok) {
+          console.error("Products fetch failed:", productsResponse.status);
+          throw new Error(`Failed to fetch products: ${productsResponse.status}`);
         }
 
-        const [restaurantData, productsData] = await Promise.all([
-          restaurantResponse.json(),
-          productsResponse.json()
-        ]);
-
-        // Filter out products without images
-        const filteredProducts = productsData.filter(product => product.image);
-
+        // Process responses
+        const restaurantData = await restaurantResponse.json();
+        const productsData = await productsResponse.json();
+        
+        // Add defensive checks
+        if (!restaurantData) throw new Error("Empty restaurant data");
+        
         setRestaurant(restaurantData);
-        setProducts(filteredProducts);
+        setProducts(productsData || []);
       } catch (err) {
+        console.error("Error in fetchRestaurantAndProducts:", err);
         setError(err.message);
+        // Set empty state to prevent rendering errors
+        setRestaurant(null);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -73,56 +83,62 @@ function RestaurantDetail({ addToCart }) {
           />
         </div>
         <div className="col-md-8">
-          <h2>{restaurant.name}</h2>
-          <p className="text-muted">{restaurant.description}</p>
+          <h2>{restaurant?.name || 'Restaurant'}</h2>
+          <p className="text-muted">{restaurant?.description || 'No description available'}</p>
           <div className="d-flex align-items-center">
             <span className="text-warning me-2">★</span>
-            <span className="me-3">{restaurant.rating}</span>
+            <span className="me-3">{restaurant.rating || 'N/A'}</span>
             <span className="text-muted">•</span>
-            <span className="ms-3">{restaurant.deliveryTime} delivery</span>
+            <span className="ms-3">{restaurant.deliveryTime || 'Unknown'} delivery</span>
           </div>
         </div>
       </div>
 
       <h3 className="mb-4">Menu</h3>
       <div className="row">
-        {products.map(product => (
-          <div key={product._id} className="col-md-4 mb-4">
-            <div className="card h-100">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="card-img-top"
-                style={{ height: '200px', objectFit: 'cover' }}
-                onError={(e) => {
-                  // Replace with a default food item image
-                  e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1480&auto=format&fit=crop";
-                  e.target.onerror = null; // Prevent infinite loops
-                }}
-              />
-              <div className="card-body">
-                <h5 className="card-title">{product.name}</h5>
-                <p className="card-text text-muted">{product.description}</p>
-                <div className="d-flex justify-content-between align-items-center">
-                  <h5 className="text-danger mb-0">${product.price.toFixed(2)}</h5>
-                  <button 
-                    className="btn btn-outline-danger"
-                    onClick={() => addToCart({
-                      _id: product._id,
-                      name: product.name,
-                      description: product.description,
-                      price: product.price,
-                      image: product.image,
-                      quantity: 1
-                    })}
-                  >
-                    Add to Cart
-                  </button>
+        {products.length === 0 ? (
+          <div className="col-12 text-center">
+            <p>No menu items available for this restaurant.</p>
+          </div>
+        ) : (
+          products.map(product => (
+            <div key={product._id} className="col-md-4 mb-4">
+              <div className="card h-100">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="card-img-top"
+                  style={{ height: '200px', objectFit: 'cover' }}
+                  onError={(e) => {
+                    // Replace with a default food item image
+                    e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1480&auto=format&fit=crop";
+                    e.target.onerror = null; // Prevent infinite loops
+                  }}
+                />
+                <div className="card-body">
+                  <h5 className="card-title">{product.name}</h5>
+                  <p className="card-text text-muted">{product.description}</p>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="text-danger mb-0">${Number(product.price).toFixed(2)}</h5>
+                    <button 
+                      className="btn btn-outline-danger"
+                      onClick={() => addToCart({
+                        _id: product._id,
+                        name: product.name,
+                        description: product.description,
+                        price: product.price,
+                        image: product.image,
+                        quantity: 1
+                      })}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
