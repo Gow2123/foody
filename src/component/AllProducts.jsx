@@ -9,8 +9,8 @@ function AllProducts({ addToCart }) {
   const [searchTerm, setSearchTerm] = useState('');
   
   useEffect(() => {
-    // Fetch products
-    fetch(`${BACKEND_URL}/products`)
+    // Fetch products using basic MongoDB CRUD
+    fetch(`${BACKEND_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
         setProducts(data.filter(p => p.image && p.type === 'product'));

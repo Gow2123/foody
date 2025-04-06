@@ -11,14 +11,14 @@ function RestaurantDetail({ addToCart }) {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    // Fetch restaurant data
-    fetch(`${BACKEND_URL}/products/restaurant/${id}`)
+    // Fetch using basic MongoDB CRUD operations
+    fetch(`${BACKEND_URL}/api/restaurants/${id}`)
       .then(res => res.json())
       .then(data => {
         setRestaurant(data);
         
-        // Fetch menu items
-        return fetch(`${BACKEND_URL}/products/by-restaurant/${id}`);
+        // Fetch menu items using the proper API endpoint
+        return fetch(`${BACKEND_URL}/api/restaurants/${id}/products`);
       })
       .then(res => res.json())
       .then(data => {

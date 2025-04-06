@@ -13,8 +13,9 @@ function Home({ addToCart }) {
     // Basic data fetching
     const fetchData = async () => {
       try {
-        const productsRes = await fetch(`${BACKEND_URL}/products`);
-        const restaurantsRes = await fetch(`${BACKEND_URL}/products/restaurants`);
+        // Using basic MongoDB CRUD operations in the API
+        const productsRes = await fetch(`${BACKEND_URL}/api/products`);
+        const restaurantsRes = await fetch(`${BACKEND_URL}/api/restaurants`);
         
         const productsData = await productsRes.json();
         const restaurantsData = await restaurantsRes.json();

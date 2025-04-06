@@ -11,8 +11,8 @@ function Restaurants() {
   const [searchTerm, setSearchTerm] = useState('');
   
   useEffect(() => {
-    // Basic data fetching
-    fetch(`${BACKEND_URL}/products/restaurants`)
+    // Basic data fetching using MongoDB CRUD
+    fetch(`${BACKEND_URL}/api/restaurants`)
       .then(res => res.json())
       .then(data => {
         setRestaurants(data.filter(r => r.image));

@@ -10,8 +10,8 @@ function Categories() {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    // Simple fetch
-    fetch(`${BACKEND_URL}/products/categories`)
+    // Simple fetch using basic MongoDB CRUD
+    fetch(`${BACKEND_URL}/api/categories`)
       .then(res => res.json())
       .then(data => {
         setCategories(data.filter(c => c.image));
