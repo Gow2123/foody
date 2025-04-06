@@ -23,32 +23,23 @@ function Navbar({ cartCount, isLoggedIn, onLogout }) {
         
         {/* Navbar links */}
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link" to="/">Home</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/restaurants">Restaurants</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/categories">Categories</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/all-products">All Products</Link>
-            </li>
+          <ul className="navbar-nav me-auto">
+            <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/restaurants">Restaurants</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/categories">Categories</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/all-products">Products</Link></li>
           </ul>
           
           <div className="d-flex">
             {/* Cart link */}
             <Link to="/cart" className="btn btn-outline-success me-2">
-              Cart
-              {cartCount > 0 && <span className="ms-1 badge bg-success">{cartCount}</span>}
+              Cart {cartCount > 0 && <span className="badge bg-success">{cartCount}</span>}
             </Link>
             
             {/* User account links */}
             {isLoggedIn ? (
               <>
-                <Link to="/myorders" className="btn btn-outline-primary me-2">My Orders</Link>
+                <Link to="/myorders" className="btn btn-outline-primary me-2">Orders</Link>
                 <button onClick={onLogout} className="btn btn-outline-danger">Logout</button>
               </>
             ) : (
