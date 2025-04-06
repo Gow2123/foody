@@ -15,46 +15,29 @@ if (import.meta.env.VITE_BACKEND_URL) {
 const BACKEND_URL = backendUrl.replace(/\/$/, '');
 
 function Navbar({ cartCount, isLoggedIn, onLogout }) {
-  const [categories, setCategories] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
-  const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false);
   const [showRestaurantsDropdown, setShowRestaurantsDropdown] = useState(false);
   
   useEffect(() => {
-    // Fetch categories for the dropdown
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/categories/featured`);
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data.slice(0, 6));
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
     // Fetch featured restaurants for the dropdown
     const fetchRestaurants = async () => {
       try {
         const response = await fetch(`${BACKEND_URL}/api/restaurants/featured`);
         if (response.ok) {
           const data = await response.json();
-          setRestaurants(data.slice(0, 5));
+          setRestaurants(data.slice(0, 7));
         }
       } catch (error) {
         console.error('Error fetching restaurants:', error);
       }
     };
     
-    fetchCategories();
     fetchRestaurants();
   }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
-      setShowCategoriesDropdown(false);
       setShowRestaurantsDropdown(false);
     };
 
@@ -98,7 +81,6 @@ function Navbar({ cartCount, isLoggedIn, onLogout }) {
                 onClick={(e) => {
                   e.preventDefault();
                   setShowRestaurantsDropdown(!showRestaurantsDropdown);
-                  setShowCategoriesDropdown(false);
                 }}
               >
                 <i className="bi bi-shop me-1"></i> Restaurants
@@ -120,42 +102,6 @@ function Navbar({ cartCount, isLoggedIn, onLogout }) {
                     >
                       <i className="bi bi-star-fill me-2 text-warning small"></i>
                       {restaurant.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            {/* Categories Dropdown */}
-            <div className="nav-item dropdown" onClick={handleDropdownClick}>
-              <a 
-                className="nav-link dropdown-toggle px-3" 
-                href="#" 
-                role="button" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowCategoriesDropdown(!showCategoriesDropdown);
-                  setShowRestaurantsDropdown(false);
-                }}
-              >
-                <i className="bi bi-tags me-1"></i> Categories
-              </a>
-              <ul className={`dropdown-menu${showCategoriesDropdown ? ' show' : ''}`}>
-                <li>
-                  <Link className="dropdown-item" to="/categories">
-                    <i className="bi bi-grid-3x3-gap me-2"></i>All Categories
-                  </Link>
-                </li>
-                <li><hr className="dropdown-divider" /></li>
-                <li className="dropdown-header">Popular Categories</li>
-                {categories.map(category => (
-                  <li key={category._id}>
-                    <Link 
-                      className="dropdown-item" 
-                      to={`/category/${category._id}`}
-                      onClick={() => setShowCategoriesDropdown(false)}
-                    >
-                      {category.name}
                     </Link>
                   </li>
                 ))}
