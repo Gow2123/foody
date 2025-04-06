@@ -16,8 +16,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   
+  // Determine API URL - prefer environment variable if available
+  const apiBaseUrl = import.meta.env.VITE_API_URL || API_URL;
+  
   // Log the API URL at initialization
-  console.log('AuthContext initialized with API_URL:', API_URL);
+  console.log('AuthContext initialized with API_URL:', apiBaseUrl);
 
   // Check if user is logged in on mount
   useEffect(() => {
@@ -30,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       if (token && userId) {
         try {
           // Verify token is valid by fetching user data
-          const userEndpoint = `${API_URL}/user/${userId}`;
+          const userEndpoint = `${apiBaseUrl}/user/${userId}`;
           console.log('Fetching user data from:', userEndpoint);
           
           const response = await axios.get(userEndpoint, {
@@ -61,12 +64,12 @@ export const AuthProvider = ({ children }) => {
     };
     
     checkAuth();
-  }, [API_URL]);
+  }, [apiBaseUrl]);
 
   // Login function
   const login = async (username, password) => {
     try {
-      const loginEndpoint = `${API_URL}/user/login`;
+      const loginEndpoint = `${apiBaseUrl}/user/login`;
       console.log('AuthContext: Sending login request to', loginEndpoint);
       
       const response = await axios.post(loginEndpoint, {
@@ -121,7 +124,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
-    apiUrl: API_URL
+    apiUrl: apiBaseUrl
   };
 
   return (
