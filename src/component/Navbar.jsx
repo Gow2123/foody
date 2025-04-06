@@ -1,57 +1,8 @@
 // import React from 'react'
-import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-// Determine backend URL based on environment
-let backendUrl;
-if (import.meta.env.VITE_BACKEND_URL) {
-  backendUrl = import.meta.env.VITE_BACKEND_URL;
-} else if (import.meta.env.DEV) {
-  backendUrl = 'http://localhost:3000'; // Default for local development
-} else {
-  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
-}
-const BACKEND_URL = backendUrl.replace(/\/$/, '');
-
 function Navbar({ cartCount, isLoggedIn, onLogout }) {
-  const [restaurants, setRestaurants] = useState([]);
-  const [showRestaurantsDropdown, setShowRestaurantsDropdown] = useState(false);
-  
-  useEffect(() => {
-    // Fetch featured restaurants for the dropdown
-    const fetchRestaurants = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/restaurants/featured`);
-        if (response.ok) {
-          const data = await response.json();
-          setRestaurants(data.slice(0, 7));
-        }
-      } catch (error) {
-        console.error('Error fetching restaurants:', error);
-      }
-    };
-    
-    fetchRestaurants();
-  }, []);
-
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowRestaurantsDropdown(false);
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
-  // Prevent dropdown from closing when clicking inside it
-  const handleDropdownClick = (e) => {
-    e.stopPropagation();
-  };
-
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-success fixed-top shadow">
       <div className="container">
@@ -72,41 +23,9 @@ function Navbar({ cartCount, isLoggedIn, onLogout }) {
               <i className="bi bi-house-door me-1"></i> Home
             </Link>
             
-            {/* Restaurants Dropdown */}
-            <div className="nav-item dropdown" onClick={handleDropdownClick}>
-              <a 
-                className="nav-link dropdown-toggle px-3" 
-                href="#" 
-                role="button" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowRestaurantsDropdown(!showRestaurantsDropdown);
-                }}
-              >
-                <i className="bi bi-shop me-1"></i> Restaurants
-              </a>
-              <ul className={`dropdown-menu${showRestaurantsDropdown ? ' show' : ''}`}>
-                <li>
-                  <Link className="dropdown-item" to="/restaurants">
-                    <i className="bi bi-grid-3x3-gap me-2"></i>All Restaurants
-                  </Link>
-                </li>
-                <li><hr className="dropdown-divider" /></li>
-                <li className="dropdown-header">Featured Restaurants</li>
-                {restaurants.map(restaurant => (
-                  <li key={restaurant._id}>
-                    <Link 
-                      className="dropdown-item" 
-                      to={`/restaurant/${restaurant._id}`}
-                      onClick={() => setShowRestaurantsDropdown(false)}
-                    >
-                      <i className="bi bi-star-fill me-2 text-warning small"></i>
-                      {restaurant.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Link className="nav-link px-3" to="/restaurants">
+              <i className="bi bi-shop me-1"></i> Restaurants
+            </Link>
             
             <Link className="nav-link px-3" to="/products">
               <i className="bi bi-grid me-1"></i> Menu
