@@ -7,9 +7,9 @@ const ItemsDisplay = () => {
 
   return (
         <div className="itemSection">
-            {displayItem.map((item)=>{
+            {displayItem.map((item, index) => {
                 return(
-                    <div className="gallery">
+                    <div className="gallery" key={item.id || index}>
                         <img src={item.item_img} alt={item.item_img} />
                     </div>
                 )

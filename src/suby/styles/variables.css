@@ -1,0 +1,105 @@
+:root {
+  /* Primary Colors */
+  --primary-color: #ff6b35;
+  --primary-light: #ff8b60;
+  --primary-dark: #e04e1a;
+  
+  /* Secondary Colors */
+  --secondary-color: #2ec4b6;
+  --secondary-light: #48e5d7;
+  --secondary-dark: #1b9e92;
+  
+  /* Neutrals */
+  --neutral-900: #1a1a1a;
+  --neutral-800: #333333;
+  --neutral-700: #4d4d4d;
+  --neutral-600: #666666;
+  --neutral-500: #808080;
+  --neutral-400: #999999;
+  --neutral-300: #b3b3b3;
+  --neutral-200: #cccccc;
+  --neutral-100: #e6e6e6;
+  --neutral-50: #f5f5f5;
+  
+  /* Accent Colors */
+  --accent-yellow: #fcbf49;
+  --accent-red: #ef476f;
+  --accent-blue: #118ab2;
+  --accent-green: #06d6a0;
+  
+  /* Status Colors */
+  --success: #06d6a0;
+  --warning: #fcbf49;
+  --error: #ef476f;
+  --info: #118ab2;
+  
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f0f1f3;
+  
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4d4d4d;
+  --text-tertiary: #808080;
+  --text-light: #ffffff;
+  
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 20px;
+  --border-radius-round: 50%;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  
+  /* Animation */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Typography */
+  --font-family-primary: 'Poppins', sans-serif;
+  --font-family-secondary: 'Montserrat', sans-serif;
+  
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-md: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Container Width */
+  --container-width: 1200px;
+  
+  /* Z-index */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+} 

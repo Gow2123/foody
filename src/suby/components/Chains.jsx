@@ -77,30 +77,19 @@ const handleScroll =(direction)=>{
       </div>
             <h3 className='chainTitle'>Top restaurant chains in Delhi</h3>
         <section className="chainSection" id="chainGallery" onScroll={(e)=>setScrollPosition(e.target.scrollf)}>
-            {vendorData.vendors && vendorData.vendors.map((vendor)=>{
-                   return(
-                    <>
-                     <div className="vendorBox">
-                        {vendor.firm.map((item)=>{
-                            return(
-                               <>
-                                <div>
-                                    {/* {item.firmName} */}
-                                  
+            {vendorData.vendors && vendorData.vendors.map((vendor, vendorIndex) => (
+                <div className="vendorBox" key={vendor._id || `vendor-${vendorIndex}`}>
+                    {vendor.firm.map((item, itemIndex) => (
+                        <div key={item._id || `firm-${vendorIndex}-${itemIndex}`}>
+                            <Link to={`/products/${item._id}/${item.firmName}`} className="link">
+                                <div className="firmImage">
+                                    <img src={`${API_URL}/uploads/${item.image}`} className='topimg' alt={item.firmName || 'Restaurant'} />
                                 </div>
-                        <Link to={`/products/${item._id}/${item.firmName}`} className="link" key={item._id}>
-                        <div className="firmImage">
-                                    <img src= {`${API_URL}/uploads/${item.image}`} className='topimg'/>
-                                </div>
-                        </Link>
-                               </>
-
-                            )
-                        })}
-                    </div>
-                    </>
-                   )
-            })}
+                            </Link>
+                        </div>
+                    ))}
+                </div>
+            ))}
         </section>
       </div>
   )
