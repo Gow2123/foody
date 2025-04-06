@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './RestaurantsPage.css';
 
+// Placeholder image for fallback
+const placeholderImage = 'https://img.icons8.com/fluency/96/restaurant.png';
+
 // Restaurant sample data with web images
 const sampleRestaurants = [
   {
@@ -119,7 +122,7 @@ const RestaurantsPage = () => {
   };
 
   return (
-    <div className="restaurants-container">
+    <div className="restaurants-container page-content">
       <div className="restaurants-header">
         <h1>Restaurants</h1>
         <p>Discover the best food for delivery near you</p>
@@ -169,7 +172,11 @@ const RestaurantsPage = () => {
           sortedRestaurants.map(restaurant => (
             <div key={restaurant.id} className="restaurant-card">
               <div className="restaurant-image">
-                <img src={restaurant.image} alt={restaurant.name} />
+                <img 
+                  src={restaurant.image} 
+                  alt={restaurant.name} 
+                  onError={(e) => {e.target.src = placeholderImage; e.target.classList.add('fallback-image');}}
+                />
                 {restaurant.featured && <span className="featured-tag">Featured</span>}
               </div>
               <div className="restaurant-info">

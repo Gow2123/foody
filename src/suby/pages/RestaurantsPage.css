@@ -4,6 +4,13 @@
   padding: 2rem 1.5rem 4rem;
 }
 
+/* Fallback image styling */
+.fallback-image {
+  object-fit: contain !important;
+  padding: 2rem !important;
+  background-color: var(--color-background-100, #f8f9fa) !important;
+}
+
 .restaurants-header {
   margin: 2rem 0;
   text-align: center;

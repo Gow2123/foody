@@ -1,38 +1,77 @@
 .landing-page {
   width: 100%;
   overflow-x: hidden;
+  padding-top: 0; /* Remove padding to fix spacing issue */
 }
 
 /* Hero Section */
 .hero-section {
   position: relative;
-  min-height: 90vh;
   display: flex;
-  align-items: center;
-  padding: 4rem 0;
-  margin-top: -80px;
   overflow: hidden;
+  min-height: calc(100vh - 80px); /* Subtract navbar height from 100vh */
+  width: 100%;
+  margin-top: 0; /* Remove any top margin */
+  padding-top: 0; /* Remove any top padding */
 }
 
 .hero-content {
-  width: 55%;
-  max-width: 700px;
-  padding: 0 2rem;
+  width: 50%;
+  max-width: 650px;
+  padding: 3rem 2rem;
   margin-left: max(calc((100% - var(--container-width)) / 2), 1.5rem);
   position: relative;
   z-index: 10;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.5rem, 4.5vw, 3.5rem);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
   margin-bottom: 1.5rem;
   color: var(--color-text-900);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .text-primary {
   color: var(--color-primary-500);
+}
+
+.accent-text {
+  position: relative;
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-bold);
+  margin-left: 0.25rem;
+}
+
+.accent-text::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary-500);
+}
+
+.accent-text-white {
+  position: relative;
+  color: white;
+  font-weight: var(--font-weight-bold);
+  margin-left: 0.25rem;
+}
+
+.accent-text-white::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .hero-subtitle {
@@ -45,7 +84,7 @@
 
 .hero-actions {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   margin-bottom: 3rem;
   flex-wrap: wrap;
 }
@@ -76,19 +115,28 @@
 .btn-primary:hover {
   background-color: var(--color-primary-600);
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 .btn-outline {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.9);
   color: var(--color-primary-500);
   border: 2px solid var(--color-primary-500);
+  font-weight: var(--font-weight-bold);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(var(--color-primary-rgb), 0.2);
 }
 
 .btn-outline:hover {
-  background-color: var(--color-primary-50);
+  background-color: var(--color-primary-500);
+  color: white;
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
+}
+
+.btn-outline:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(var(--color-primary-rgb), 0.2);
 }
 
 .hero-stats {
@@ -118,9 +166,10 @@
   position: absolute;
   right: 0;
   top: 0;
-  width: 55%;
+  width: 65%;
   height: 100%;
   overflow: hidden;
+  z-index: 1;
 }
 
 .hero-image {
@@ -138,12 +187,13 @@
   height: 100%;
   background: linear-gradient(
     90deg,
-    var(--color-background-100) 5%,
-    rgba(255, 255, 255, 0.9) 30%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 0.2) 70%,
+    var(--color-background-100) 0%,
+    rgba(255, 255, 255, 0.9) 20%,
+    rgba(255, 255, 255, 0.7) 40%,
+    rgba(255, 255, 255, 0.3) 60%,
     rgba(255, 255, 255, 0) 100%
   );
+  z-index: 2;
 }
 
 /* Features Section */
@@ -424,14 +474,20 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    min-height: auto;
-    padding: 7rem 0 4rem;
+    padding: 3rem 0;
+    min-height: 70vh;
   }
-  
+
+  .landing-page {
+    padding-top: 70px; /* Slightly reduced padding for mobile */
+  }
+
   .hero-content {
-    width: 100%;
-    margin-left: 0;
+    width: 90%;
+    margin: 0 auto;
     text-align: center;
+    padding: 2rem 1.5rem;
+    background-color: rgba(255, 255, 255, 0.95);
   }
   
   .hero-subtitle {
@@ -447,18 +503,14 @@
   }
   
   .hero-image-container {
-    position: relative;
     width: 100%;
-    height: 350px;
-    margin-top: 2rem;
   }
   
   .hero-backdrop {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(255, 255, 255, 0.7) 50%,
-      rgba(255, 255, 255, 0.2) 100%
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.8) 100%
     );
   }
   
@@ -498,4 +550,72 @@
   .stat-item {
     align-items: center;
   }
+}
+
+/* Enhanced Signup Button */
+.signup-attention {
+  position: relative;
+  overflow: hidden;
+  animation: pulse 2s infinite;
+  transform-origin: center;
+  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.5);
+  border-width: 3px !important;
+}
+
+.signup-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: var(--color-secondary-500, #ff6b6b);
+  color: white;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: bold;
+  transform: rotate(15deg);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.7);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.5);
+  }
+}
+
+.signup-attention .accent-text {
+  font-size: 1.1em;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--color-primary-600);
+}
+
+.signup-attention:hover {
+  animation: none;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 25px rgba(var(--color-primary-rgb), 0.4);
+}
+
+.cta-button {
+  font-size: 1.2em !important;
+  padding: 1.2rem 2.5rem !important;
+  background: linear-gradient(45deg, var(--color-primary-600), var(--color-primary-400)) !important;
+  border: none !important;
+}
+
+.cta-button .accent-text-white {
+  font-size: 1.1em;
+  font-weight: 800;
+}
+
+.cta-button:hover {
+  background: linear-gradient(45deg, var(--color-primary-700), var(--color-primary-500)) !important;
 } 

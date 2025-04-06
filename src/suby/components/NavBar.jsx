@@ -65,6 +65,16 @@ const NavBar = () => {
             <li className={location.pathname === '/menu' ? 'active' : ''}>
               <Link to="/menu" onClick={() => setMobileMenuOpen(false)}>Menu</Link>
             </li>
+            {isLoggedIn && (
+              <>
+                <li className={location.pathname === '/cart' ? 'active' : ''}>
+                  <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>My Cart</Link>
+                </li>
+                <li className={location.pathname === '/orders' ? 'active' : ''}>
+                  <Link to="/orders" onClick={() => setMobileMenuOpen(false)}>My Orders</Link>
+                </li>
+              </>
+            )}
             <li className={location.pathname === '/about' ? 'active' : ''}>
               <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About</Link>
             </li>
@@ -95,7 +105,7 @@ const NavBar = () => {
               </div>
             ) : (
               <button onClick={handleLogin} className="btn-login">
-                Login / Sign Up
+                <span>Login</span> / <span>Sign Up</span>
               </button>
             )}
           </div>

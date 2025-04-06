@@ -31,8 +31,9 @@ const LandingPage = () => {
               Browse Restaurants
             </Link>
             {!isLoggedIn && (
-              <Link to="/auth" className="btn btn-outline btn-lg">
-                Sign Up Now
+              <Link to="/auth" className="btn btn-outline btn-lg signup-attention">
+                <span>Sign Up</span> <span className="accent-text">FREE</span>
+                <span className="signup-badge">Limited Time!</span>
               </Link>
             )}
           </div>
@@ -141,8 +142,9 @@ const LandingPage = () => {
                   Order Now
                 </Link>
               ) : (
-                <Link to="/auth" className="btn btn-primary btn-lg">
-                  Get Started
+                <Link to="/auth" className="btn btn-primary btn-lg signup-attention cta-button">
+                  Get Started <span className="accent-text-white">TODAY</span>
+                  <span className="signup-badge">Limited Offer!</span>
                 </Link>
               )}
             </div>
