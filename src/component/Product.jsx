@@ -2,16 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-// Determine backend URL based on environment
-let backendUrl;
-if (import.meta.env.VITE_BACKEND_URL) {
-  backendUrl = import.meta.env.VITE_BACKEND_URL;
-} else if (import.meta.env.DEV) {
-  backendUrl = 'http://localhost:3000'; // Default for local development
-} else {
-  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
-}
-const BACKEND_URL = backendUrl.replace(/\/$/, '');
+// Use environment variable for backend URL with fallback
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 function Product({ addToCart }) {
   const { id } = useParams();
@@ -21,23 +13,18 @@ function Product({ addToCart }) {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        // Ensure slash for fetch
-        const response = await fetch(`${BACKEND_URL}/products/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch product');
-        }
-        const data = await response.json();
+    console.log(`Fetching product ${id} from: ${BACKEND_URL}`);
+    fetch(`${BACKEND_URL}/api/products/${id}`)
+      .then(res => res.json())
+      .then(data => {
         setProduct(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
         setLoading(false);
-      }
-    };
-
-    fetchProduct();
+      })
+      .catch(err => {
+        console.error("Error fetching product:", err);
+        setError(err.message);
+        setLoading(false);
+      });
   }, [id]);
 
   const handleAddToCart = () => {
@@ -53,12 +40,12 @@ function Product({ addToCart }) {
     }
   };
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="text-center mt-5 text-danger">Error: {error}</div>;
-  if (!product) return <div className="text-center mt-5">Product not found</div>;
+  if (loading) return <div className="container mt-5 text-center">Loading...</div>;
+  if (error) return <div className="container mt-5 text-danger">Error: {error}</div>;
+  if (!product) return <div className="container mt-5">Product not found</div>;
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-4">
       <div className="row">
         <div className="col-md-6">
           <img 
@@ -69,19 +56,16 @@ function Product({ addToCart }) {
           />
         </div>
         <div className="col-md-6">
-          <h2 className="mb-3">{product.name}</h2>
-          <p className="text-muted mb-4">{product.description}</p>
+          <h1>{product.name}</h1>
+          <p className="lead">{product.description}</p>
+          <p className="fs-4 fw-bold">${product.price.toFixed(2)}</p>
           
-          <div className="mb-4">
-            <h4 className="text-danger">${product.price.toFixed(2)}</h4>
-            <div className="d-flex align-items-center mb-3">
-              <span className="text-warning me-2">★</span>
-              <span className="me-3">{product.rating}</span>
-              <span className="text-muted">•</span>
-              <span className="ms-3">{product.deliveryTime} delivery</span>
-            </div>
-          </div>
-
+          {product.inStock ? (
+            <span className="badge bg-success mb-3">In Stock</span>
+          ) : (
+            <span className="badge bg-danger mb-3">Out of Stock</span>
+          )}
+          
           <div className="mb-4">
             <label className="form-label">Quantity:</label>
             <div className="input-group" style={{ width: '150px' }}>
@@ -109,12 +93,15 @@ function Product({ addToCart }) {
             </div>
           </div>
 
-          <button 
-            className="btn btn-danger w-100"
-            onClick={handleAddToCart}
-          >
-            Add to Cart
-          </button>
+          <div>
+            <button 
+              className="btn btn-primary btn-lg" 
+              onClick={handleAddToCart}
+              disabled={!product.inStock}
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
       </div>
     </div>

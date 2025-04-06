@@ -1,44 +1,33 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-const BACKEND_URL = 'http://localhost:3000';
+// Use environment variable for backend URL with fallback
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
-function AllProducts({ addToCart }) {
+function AllProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
   useEffect(() => {
-    // Fetch products using basic MongoDB CRUD
+    console.log("Fetching products from:", BACKEND_URL);
     fetch(`${BACKEND_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
-        setProducts(data.filter(p => p.image && p.type === 'product'));
+        console.log(`Found ${data.length} products`);
+        setProducts(data);
         setLoading(false);
       })
       .catch(err => {
-        console.error(err);
+        console.error("Error fetching products:", err);
         setLoading(false);
       });
   }, []);
   
-  // Simple filter based on search
-  const filteredProducts = searchTerm === '' 
-    ? products 
-    : products.filter(product => 
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-  
-  // Add to cart
-  const handleAddToCart = (product) => {
-    addToCart({
-      _id: product._id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1
-    });
-  };
+  // Filter results
+  const filteredProducts = products.filter(product => 
+    searchTerm === '' || product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
   if (loading) return <div className="container mt-5 text-center">Loading...</div>;
 
@@ -46,7 +35,7 @@ function AllProducts({ addToCart }) {
     <div className="container mt-4">
       <h1>All Products</h1>
       
-      {/* Search box */}
+      {/* Search */}
       <div className="mb-4">
         <input 
           type="text" 
@@ -56,37 +45,31 @@ function AllProducts({ addToCart }) {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-      
-      {/* Products grid */}
-      <div className="row">
-        {filteredProducts.map(product => (
-          <div key={product._id} className="col-md-4 mb-4">
-            <div className="card">
-              <img src={product.image} alt={product.name} className="card-img-top" />
-              <div className="card-body">
-                <h5 className="card-title">{product.name}</h5>
-                <p>${product.price.toFixed(2)}</p>
-                <button 
-                  className="btn btn-primary" 
-                  onClick={() => handleAddToCart(product)}
-                >
-                  Add to Cart
-                </button>
+
+      {/* Results */}
+      {filteredProducts.length === 0 ? (
+        <div className="alert alert-info">No products found</div>
+      ) : (
+        <div className="row">
+          {filteredProducts.map(product => (
+            <div key={product._id} className="col-md-4 mb-4">
+              <div className="card">
+                <img src={product.image} alt={product.name} className="card-img-top" />
+                <div className="card-body">
+                  <h5 className="card-title">{product.name}</h5>
+                  <p className="card-text">{product.description}</p>
+                  <p className="card-text fw-bold">${product.price.toFixed(2)}</p>
+                  <Link to={`/product/${product._id}`} className="btn btn-primary">
+                    View Details
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-      
-      {filteredProducts.length === 0 && (
-        <div className="alert alert-info">No products found</div>
+          ))}
+        </div>
       )}
     </div>
   );
 }
-
-AllProducts.propTypes = {
-  addToCart: PropTypes.func.isRequired
-};
 
 export default AllProducts; 

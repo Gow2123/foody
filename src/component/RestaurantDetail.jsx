@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const BACKEND_URL = 'http://localhost:3000';
+// Use environment variable for backend URL with fallback
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 function RestaurantDetail({ addToCart }) {
   const { id } = useParams();
@@ -11,14 +12,14 @@ function RestaurantDetail({ addToCart }) {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    // Fetch using basic MongoDB CRUD operations
+    console.log(`Fetching restaurant ${id} from: ${BACKEND_URL}`);
+    
+    // Fetch restaurant details
     fetch(`${BACKEND_URL}/api/restaurants/${id}`)
       .then(res => res.json())
       .then(data => {
         setRestaurant(data);
-        
-        // Fetch menu items using the proper API endpoint
-        return fetch(`${BACKEND_URL}/api/restaurants/${id}/products`);
+        return fetch(`${BACKEND_URL}/api/products/restaurant/${id}`);
       })
       .then(res => res.json())
       .then(data => {
@@ -26,7 +27,7 @@ function RestaurantDetail({ addToCart }) {
         setLoading(false);
       })
       .catch(err => {
-        console.error(err);
+        console.error("Error fetching restaurant data:", err);
         setLoading(false);
       });
   }, [id]);
@@ -54,13 +55,17 @@ function RestaurantDetail({ addToCart }) {
           <img 
             src={restaurant.image} 
             alt={restaurant.name} 
-            className="img-fluid"
+            className="img-fluid rounded"
           />
         </div>
         <div className="col-md-8">
           <h1>{restaurant.name}</h1>
           <p>{restaurant.description}</p>
-          <p>{restaurant.cuisineType || restaurant.type}</p>
+          <div className="mb-3">
+            <span className="badge bg-primary me-2">Rating: {restaurant.rating}★</span>
+            <span className="badge bg-secondary me-2">{restaurant.cuisineType || restaurant.type}</span>
+            <span className="badge bg-info">Delivery: {restaurant.deliveryTime} min</span>
+          </div>
         </div>
       </div>
 
@@ -72,24 +77,19 @@ function RestaurantDetail({ addToCart }) {
       ) : (
         <div className="row">
           {products.map(product => (
-            <div key={product._id} className="col-md-6 mb-4">
+            <div key={product._id} className="col-md-4 mb-4">
               <div className="card">
-                <div className="row g-0">
-                  <div className="col-md-4">
-                    <img src={product.image} alt={product.name} className="img-fluid" />
-                  </div>
-                  <div className="col-md-8">
-                    <div className="card-body">
-                      <h5 className="card-title">{product.name}</h5>
-                      <p>${product.price.toFixed(2)}</p>
-                      <button 
-                        className="btn btn-primary" 
-                        onClick={() => handleAddToCart(product)}
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
+                <img src={product.image} alt={product.name} className="card-img-top" />
+                <div className="card-body">
+                  <h5 className="card-title">{product.name}</h5>
+                  <p className="card-text">{product.description}</p>
+                  <p className="card-text fw-bold">${product.price.toFixed(2)}</p>
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </div>

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const BACKEND_URL = 'http://localhost:3000';
+// Use environment variable for backend URL with fallback
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 function Home({ addToCart }) {
   const [products, setProducts] = useState([]);
@@ -13,7 +14,7 @@ function Home({ addToCart }) {
     // Basic data fetching
     const fetchData = async () => {
       try {
-        // Using basic MongoDB CRUD operations in the API
+        console.log("Fetching data from:", BACKEND_URL);
         const productsRes = await fetch(`${BACKEND_URL}/api/products`);
         const restaurantsRes = await fetch(`${BACKEND_URL}/api/restaurants`);
         
@@ -23,7 +24,7 @@ function Home({ addToCart }) {
         setProducts(productsData.filter(product => product.image));
         setRestaurants(restaurantsData.filter(restaurant => restaurant.image));
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }

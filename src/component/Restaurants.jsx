@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const BACKEND_URL = 'http://localhost:3000';
+// Use environment variable for backend URL with fallback
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 function Restaurants() {
   const [restaurants, setRestaurants] = useState([]);
@@ -11,15 +12,16 @@ function Restaurants() {
   const [searchTerm, setSearchTerm] = useState('');
   
   useEffect(() => {
-    // Basic data fetching using MongoDB CRUD
+    console.log("Fetching restaurants from:", BACKEND_URL);
     fetch(`${BACKEND_URL}/api/restaurants`)
       .then(res => res.json())
       .then(data => {
+        console.log(`Found ${data.length} restaurants`);
         setRestaurants(data.filter(r => r.image));
         setLoading(false);
       })
       .catch(err => {
-        console.error(err);
+        console.error("Fetch error:", err);
         setLoading(false);
       });
   }, []);
