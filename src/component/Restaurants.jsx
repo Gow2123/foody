@@ -22,21 +22,25 @@ function Restaurants() {
   
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCuisine, setSelectedCuisine] = useState('all');
   const [sortOption, setSortOption] = useState('rating');
   const [minRating, setMinRating] = useState(0);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/products/restaurants`);
+        setLoading(true);
+        // Use the dedicated restaurant API
+        const response = await fetch(`${BACKEND_URL}/api/restaurants`);
         if (!response.ok) {
           throw new Error('Failed to fetch restaurants');
         }
         const data = await response.json();
+        console.log("Fetched restaurants:", data.length);
         setRestaurants(data);
         setFilteredRestaurants(data);
       } catch (err) {
+        console.error("Error fetching restaurants:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -50,21 +54,21 @@ function Restaurants() {
   useEffect(() => {
     let results = [...restaurants];
     
-    // Filter out restaurants with no images or broken images
+    // Filter out restaurants with no images
     results = results.filter(restaurant => restaurant.image);
     
     // Apply search filter
     if (searchTerm) {
       results = results.filter(restaurant => 
         restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.description.toLowerCase().includes(searchTerm.toLowerCase())
+        (restaurant.description && restaurant.description.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
     
-    // Apply category filter
-    if (selectedCategory !== 'all') {
+    // Apply cuisine filter
+    if (selectedCuisine !== 'all') {
       results = results.filter(restaurant => 
-        restaurant.category === selectedCategory
+        restaurant.cuisineType === selectedCuisine || restaurant.type === selectedCuisine
       );
     }
     
@@ -78,13 +82,13 @@ function Restaurants() {
     // Apply sorting
     switch (sortOption) {
       case 'rating':
-        results.sort((a, b) => b.rating - a.rating);
+        results.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case 'delivery':
         // Sort by delivery time (assuming format like "30-45 min")
         results.sort((a, b) => {
-          const aTime = parseInt(a.deliveryTime.split('-')[0]);
-          const bTime = parseInt(b.deliveryTime.split('-')[0]);
+          const aTime = parseInt(a.deliveryTime?.split('-')[0] || '30');
+          const bTime = parseInt(b.deliveryTime?.split('-')[0] || '30');
           return aTime - bTime;
         });
         break;
@@ -96,18 +100,46 @@ function Restaurants() {
     }
     
     setFilteredRestaurants(results);
-  }, [restaurants, searchTerm, selectedCategory, sortOption, minRating]);
+  }, [restaurants, searchTerm, selectedCuisine, sortOption, minRating]);
 
-  // Get unique categories from restaurants
-  const categories = ['all', ...new Set(restaurants.map(restaurant => restaurant.category))];
+  // Get unique cuisine types from restaurants
+  const cuisineTypes = ['all'];
+  restaurants.forEach(restaurant => {
+    const cuisine = restaurant.cuisineType || restaurant.type;
+    if (cuisine && !cuisineTypes.includes(cuisine)) {
+      cuisineTypes.push(cuisine);
+    }
+  });
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="text-center mt-5 text-danger">Error: {error}</div>;
+  if (loading) return (
+    <div className="container mt-5 pt-5">
+      <div className="text-center">
+        <div className="spinner-border text-danger" role="status">
+          <span className="visually-hidden">Loading restaurants...</span>
+        </div>
+        <p className="mt-3">Discovering restaurants in your area...</p>
+        <div className="progress mt-2" style={{height: '4px'}}>
+          <div className="progress-bar bg-danger progress-bar-striped progress-bar-animated" style={{width: '100%'}}></div>
+        </div>
+      </div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="container mt-5">
+      <div className="alert alert-danger">
+        <h4 className="alert-heading">Error Loading Restaurants</h4>
+        <p>{error}</p>
+        <hr />
+        <p className="mb-0">Please try refreshing the page or contact support if the problem persists.</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mt-5">
       {/* Hero section */}
-      <div className="card bg-dark text-white mb-5">
+      <div className="card border-0 bg-dark text-white mb-5 rounded-3 overflow-hidden">
         <img 
           src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1470&auto=format&fit=crop" 
           className="card-img" 
@@ -143,12 +175,12 @@ function Restaurants() {
             <div className="col-md-4 mb-3">
               <select 
                 className="form-select" 
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                value={selectedCuisine}
+                onChange={(e) => setSelectedCuisine(e.target.value)}
               >
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
+                {cuisineTypes.map(cuisine => (
+                  <option key={cuisine} value={cuisine}>
+                    {cuisine === 'all' ? 'All Cuisines' : cuisine}
                   </option>
                 ))}
               </select>
@@ -185,7 +217,7 @@ function Restaurants() {
         <p className="text-muted">
           Showing {filteredRestaurants.length} restaurants
           {searchTerm && ` for "${searchTerm}"`}
-          {selectedCategory !== 'all' && ` in ${selectedCategory}`}
+          {selectedCuisine !== 'all' && ` in ${selectedCuisine}`}
           {minRating > 0 && ` with ${minRating}+ stars`}
         </p>
       </div>
@@ -193,93 +225,103 @@ function Restaurants() {
       {/* Restaurant cards */}
       {filteredRestaurants.length === 0 ? (
         <div className="text-center my-5">
+          <i className="bi bi-shop-window text-danger display-1 mb-3"></i>
           <h3>No restaurants found</h3>
           <p className="text-muted">Try adjusting your filters</p>
           <button 
             className="btn btn-outline-danger"
             onClick={() => {
               setSearchTerm('');
-              setSelectedCategory('all');
+              setSelectedCuisine('all');
               setMinRating(0);
               setSortOption('rating');
             }}
           >
-            Reset Filters
+            <i className="bi bi-arrow-repeat me-2"></i>Reset Filters
           </button>
         </div>
       ) : (
         <div className="row">
           {filteredRestaurants.map(restaurant => (
             <div key={restaurant._id} className="col-md-4 mb-4">
-              <div className="card h-100 shadow-sm">
+              <div className="card h-100 shadow-sm border-0 hover-card">
                 <div className="position-relative">
-                  <img 
-                    src={restaurant.image} 
-                    alt={restaurant.name} 
-                    className="card-img-top"
-                    style={{ height: '200px', objectFit: 'cover' }}
-                    onError={(e) => {
-                      e.target.src = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1374&auto=format&fit=crop";
-                      e.target.onerror = null;
-                    }}
-                  />
+                  <Link to={`/restaurant/${restaurant._id}`}>
+                    <img 
+                      src={restaurant.image} 
+                      alt={restaurant.name} 
+                      className="card-img-top"
+                      style={{ height: '200px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.target.src = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1374&auto=format&fit=crop";
+                        e.target.onerror = null;
+                      }}
+                    />
+                  </Link>
                   {restaurant.rating >= 4.5 && (
                     <div className="position-absolute top-0 start-0 bg-success text-white px-2 py-1 m-2 rounded-pill">
-                      Top Rated
+                      <i className="bi bi-award-fill me-1"></i>Top Rated
                     </div>
                   )}
-                  <div className="position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 m-2 rounded-pill">
-                    {restaurant.category}
+                  <div className="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded">
+                    <i className="bi bi-star-fill me-1"></i>
+                    {restaurant.rating?.toFixed(1) || '4.0'}
                   </div>
                 </div>
                 <div className="card-body">
-                  <h5 className="card-title">{restaurant.name}</h5>
-                  <p className="card-text text-muted">{restaurant.description}</p>
+                  <h5 className="card-title">
+                    <Link to={`/restaurant/${restaurant._id}`} className="text-decoration-none text-dark">
+                      {restaurant.name}
+                    </Link>
+                  </h5>
+                  <p className="card-text text-muted small">
+                    {restaurant.description?.substring(0, 80)}
+                    {restaurant.description?.length > 80 ? '...' : ''}
+                  </p>
                   <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <span className="text-warning">★</span>
-                      <span className="ms-1">{restaurant.rating}</span>
-                      <span className="badge bg-light text-dark ms-2">{restaurant.category}</span>
-                    </div>
-                    <span className="text-muted">{restaurant.deliveryTime} delivery</span>
+                    <span className="badge bg-light text-dark">
+                      {restaurant.cuisineType || restaurant.type || 'Various'}
+                    </span>
+                    <span className="text-muted small">
+                      <i className="bi bi-clock me-1"></i>
+                      {restaurant.deliveryTime || '30-45 min'}
+                    </span>
                   </div>
                   <hr />
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="small text-muted">
-                      <i className="bi bi-clock me-1"></i> Open Now
+                      <i className="bi bi-geo-alt me-1"></i>
+                      {restaurant.address ? restaurant.address.split(',')[0] : 'Local Area'}
                     </div>
-                    <div className="small text-muted">
-                      <i className="bi bi-geo-alt me-1"></i> 2.5 km away
-                    </div>
+                    <span className="badge bg-light text-dark">
+                      {restaurant.priceRange || '$$'}
+                    </span>
                   </div>
-                  <div className="mt-3">
-                    <Link to={`/restaurant/${restaurant._id}`} className="btn btn-outline-danger w-100">
-                      View Menu
-                    </Link>
-                  </div>
+                </div>
+                <div className="card-footer bg-white border-0">
+                  <Link 
+                    to={`/restaurant/${restaurant._id}`} 
+                    className="btn btn-outline-danger w-100"
+                  >
+                    <i className="bi bi-menu-button-wide me-1"></i> View Menu
+                  </Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
-
-      {/* Pagination placeholder */}
-      <div className="d-flex justify-content-center mt-4 mb-5">
-        <nav aria-label="Restaurant pagination">
-          <ul className="pagination">
-            <li className="page-item disabled">
-              <a className="page-link" href="#" tabIndex="-1" aria-disabled="true">Previous</a>
-            </li>
-            <li className="page-item active"><a className="page-link" href="#">1</a></li>
-            <li className="page-item"><a className="page-link" href="#">2</a></li>
-            <li className="page-item"><a className="page-link" href="#">3</a></li>
-            <li className="page-item">
-              <a className="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      
+      {/* Add custom CSS for hover effects */}
+      <style>{`
+        .hover-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+      `}</style>
     </div>
   );
 }
