@@ -30,18 +30,34 @@ function Restaurants() {
     const fetchRestaurants = async () => {
       try {
         setLoading(true);
-        // Use the dedicated restaurant API
-        const response = await fetch(`${BACKEND_URL}/api/restaurants`);
+        console.log("Attempting to fetch restaurants from API...");
+        
+        // First try the dedicated restaurant API
+        let response = await fetch(`${BACKEND_URL}/api/restaurants`);
+        
+        // If the new endpoint fails, try the old one as fallback
         if (!response.ok) {
-          throw new Error('Failed to fetch restaurants');
+          console.warn("New API endpoint failed, trying fallback...");
+          response = await fetch(`${BACKEND_URL}/products/restaurants`);
         }
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch restaurants: ${response.status} ${response.statusText}`);
+        }
+        
         const data = await response.json();
-        console.log("Fetched restaurants:", data.length);
+        console.log("✓ Successfully fetched restaurants:", data.length);
+        console.log("Sample restaurant:", data.length > 0 ? JSON.stringify(data[0], null, 2) : "No restaurants found");
+        
+        if (data.length === 0) {
+          console.warn("Restaurant data is empty. Check if the backend is properly seeded.");
+        }
+        
         setRestaurants(data);
         setFilteredRestaurants(data);
       } catch (err) {
-        console.error("Error fetching restaurants:", err);
-        setError(err.message);
+        console.error("❌ Error fetching restaurants:", err);
+        setError(`${err.message}. Make sure your backend server is running.`);
       } finally {
         setLoading(false);
       }

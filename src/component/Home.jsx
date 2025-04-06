@@ -27,21 +27,38 @@ function Home({ addToCart }) {
     const fetchHomePageData = async () => {
       try {
         setLoading(true);
+        console.log("Fetching home page data...");
         
-        // Use the dedicated API endpoints
-        const [productsRes, categoriesRes, restaurantsRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/products`),
-          fetch(`${BACKEND_URL}/api/categories`),
-          fetch(`${BACKEND_URL}/api/restaurants`)
-        ]);
-
+        // Try the new API endpoints first with fallback to old ones
+        let productsRes, categoriesRes, restaurantsRes;
+        
+        // Fetch products
+        productsRes = await fetch(`${BACKEND_URL}/products`);
         if (!productsRes.ok) throw new Error('Failed to fetch products');
-        if (!categoriesRes.ok) throw new Error('Failed to fetch categories');
-        if (!restaurantsRes.ok) throw new Error('Failed to fetch restaurants');
+        
+        // Fetch categories - try new endpoint first
+        categoriesRes = await fetch(`${BACKEND_URL}/api/categories`);
+        if (!categoriesRes.ok) {
+          console.warn("Categories API failed, trying fallback...");
+          categoriesRes = await fetch(`${BACKEND_URL}/products/categories`);
+          if (!categoriesRes.ok) throw new Error('Failed to fetch categories');
+        }
+        
+        // Fetch restaurants - try new endpoint first
+        restaurantsRes = await fetch(`${BACKEND_URL}/api/restaurants`);
+        if (!restaurantsRes.ok) {
+          console.warn("Restaurants API failed, trying fallback...");
+          restaurantsRes = await fetch(`${BACKEND_URL}/products/restaurants`);
+          if (!restaurantsRes.ok) throw new Error('Failed to fetch restaurants');
+        }
 
         const productsData = await productsRes.json();
         const categoriesData = await categoriesRes.json();
         const restaurantsData = await restaurantsRes.json();
+
+        console.log("✓ Products fetched:", productsData.length);
+        console.log("✓ Categories fetched:", categoriesData.length);
+        console.log("✓ Restaurants fetched:", restaurantsData.length);
 
         // Filter out items without images
         const filteredProducts = productsData.filter(product => product.image);
@@ -53,9 +70,10 @@ function Home({ addToCart }) {
         setCategories(filteredCategories);
         setRestaurants(filteredRestaurants);
         
-        console.log("Fetched restaurants:", filteredRestaurants.length);
+        console.log("Restaurant sample:", filteredRestaurants.length > 0 ? 
+          JSON.stringify(filteredRestaurants[0], null, 2) : "No restaurants available");
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("❌ Error fetching data:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -133,6 +151,9 @@ function Home({ addToCart }) {
   const trendingProducts = [...products]
     .sort((a, b) => (b.rating || 0) - (a.rating || 0))
     .slice(0, 6);
+
+  // Fix linter error in CTA section
+  const ctaTitle = "Hungry? We've got you covered!";
 
   return (
     <div>
@@ -373,7 +394,7 @@ function Home({ addToCart }) {
             <div className="row g-0">
               <div className="col-md-8">
                 <div className="card-body p-5">
-                  <h3 className="card-title fw-bold">Hungry? We've got you covered!</h3>
+                  <h3 className="card-title fw-bold">{ctaTitle}</h3>
                   <p className="card-text fs-5 mb-4">Order your favorite food from the best restaurants in town, delivered straight to your door.</p>
                   <Link to="/all-products" className="btn btn-light btn-lg">
                     <i className="bi bi-arrow-right-circle me-2"></i>Browse Our Full Menu
