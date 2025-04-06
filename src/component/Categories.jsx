@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-// Use environment variable for backend URL with fallback
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import BACKEND_URL from '../config';
 
 function Categories() {
   const [categories, setCategories] = useState([]);

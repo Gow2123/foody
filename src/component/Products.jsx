@@ -1,17 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-
-// Determine backend URL based on environment
-let backendUrl;
-if (import.meta.env.VITE_BACKEND_URL) {
-  backendUrl = import.meta.env.VITE_BACKEND_URL;
-} else if (import.meta.env.DEV) {
-  backendUrl = 'http://localhost:3000'; // Default for local development
-} else {
-  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
-}
-const BACKEND_URL = backendUrl.replace(/\/$/, '');
+import BACKEND_URL from '../config';
 
 // Simple cache for API requests
 const apiCache = {

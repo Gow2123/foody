@@ -2,17 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// Determine backend URL based on environment
-let backendUrl;
-if (import.meta.env.VITE_BACKEND_URL) {
-  backendUrl = import.meta.env.VITE_BACKEND_URL;
-} else if (import.meta.env.DEV) {
-  backendUrl = 'http://localhost:3000'; // Default for local development
-} else {
-  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
-}
-const BACKEND_URL = backendUrl.replace(/\/$/, '');
+import BACKEND_URL from '../config';
 
 function MyOrders() {
   const navigate = useNavigate();
@@ -88,7 +78,7 @@ function MyOrders() {
       <h2 className="mb-4">My Orders</h2>
       {orders.length === 0 ? (
         <div className="text-center">
-          <p className="text-muted">You haven't placed any orders yet.</p>
+          <p className="text-muted">You haven&apos;t placed any orders yet.</p>
           <button className="btn btn-danger" onClick={() => navigate('/')}>
             Start Ordering
           </button>

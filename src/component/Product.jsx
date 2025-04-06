@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
-// Use environment variable for backend URL with fallback
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import BACKEND_URL from '../config';
 
 function Product({ addToCart }) {
   const { id } = useParams();
