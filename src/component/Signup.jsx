@@ -1,18 +1,8 @@
 // Signup component with colorful design
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
-// Determine backend URL based on environment
-let backendUrl;
-if (import.meta.env.VITE_BACKEND_URL) {
-  backendUrl = import.meta.env.VITE_BACKEND_URL;
-} else if (import.meta.env.DEV) {
-  backendUrl = 'http://localhost:3000'; // Default for local development
-} else {
-  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
-}
-const BACKEND_URL = backendUrl.replace(/\/$/, '');
+import BACKEND_URL from '../config';
 
 function Signup({ setIsLoggedIn }) {
   const navigate = useNavigate();
@@ -22,6 +12,8 @@ function Signup({ setIsLoggedIn }) {
     confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -33,14 +25,18 @@ function Signup({ setIsLoggedIn }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
+    setLoading(true);
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
     try {
+      console.log(`Attempting registration at: ${BACKEND_URL}/register`);
       const response = await fetch(`${BACKEND_URL}/register`, {
         method: 'POST',
         headers: {
@@ -58,12 +54,19 @@ function Signup({ setIsLoggedIn }) {
         throw new Error(data.error || 'Registration failed');
       }
 
-      // Registration successful, store token and redirect to login
-      localStorage.setItem('token', data.token);
-      setIsLoggedIn(true);
-      navigate('/');
+      // Registration successful
+      setSuccess('Registration successful! Redirecting to login...');
+      
+      // Redirect to login after a short delay
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+      
     } catch (err) {
-      setError(err.message);
+      console.error("Registration error:", err);
+      setError(err.message || 'Failed to connect to the server. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,6 +85,12 @@ function Signup({ setIsLoggedIn }) {
               {error && (
                 <div className="alert alert-danger" role="alert">
                   {error}
+                </div>
+              )}
+              
+              {success && (
+                <div className="alert alert-success" role="alert">
+                  {success}
                 </div>
               )}
 
@@ -123,10 +132,16 @@ function Signup({ setIsLoggedIn }) {
                   />
                 </div>
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-danger btn-lg fw-bold">SIGN UP</button>
+                  <button 
+                    type="submit" 
+                    className="btn btn-danger btn-lg fw-bold"
+                    disabled={loading}
+                  >
+                    {loading ? 'SIGNING UP...' : 'SIGN UP'}
+                  </button>
                 </div>
                 <div className="text-center mt-4">
-                  <p>Already have an account? <a href="#" className="text-danger fw-bold text-decoration-none" onClick={() => navigate('/login')}>Login</a></p>
+                  <p>Already have an account? <Link to="/login" className="text-danger fw-bold text-decoration-none">Login</Link></p>
                 </div>
               </form>
             </div>

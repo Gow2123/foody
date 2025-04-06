@@ -3,17 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
-// Determine backend URL based on environment
-let backendUrl;
-if (import.meta.env.VITE_BACKEND_URL) {
-  backendUrl = import.meta.env.VITE_BACKEND_URL;
-} else if (import.meta.env.DEV) {
-  backendUrl = 'http://localhost:3000'; // Default for local development
-} else {
-  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
-}
-const BACKEND_URL = backendUrl.replace(/\/$/, '');
+import BACKEND_URL from '../config';
 
 function Login({ setIsLoggedIn }) {
   const navigate = useNavigate();
@@ -23,6 +13,7 @@ function Login({ setIsLoggedIn }) {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -35,8 +26,10 @@ function Login({ setIsLoggedIn }) {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
 
     try {
+      console.log(`Attempting login at: ${BACKEND_URL}/login`);
       const response = await fetch(`${BACKEND_URL}/login`, {
         method: 'POST',
         headers: {
@@ -53,6 +46,7 @@ function Login({ setIsLoggedIn }) {
 
       // Store the token in localStorage
       localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.userId);
       setIsLoggedIn(true);
       setSuccess('Login successful! Redirecting...');
       
@@ -61,7 +55,10 @@ function Login({ setIsLoggedIn }) {
         navigate('/');
       }, 1500);
     } catch (err) {
-      setError(err.message);
+      console.error("Login error:", err);
+      setError(err.message || 'Failed to connect to the server. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,7 +123,13 @@ function Login({ setIsLoggedIn }) {
                   />
                 </div>
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-danger btn-lg fw-bold">LOGIN</button>
+                  <button 
+                    type="submit" 
+                    className="btn btn-danger btn-lg fw-bold"
+                    disabled={loading}
+                  >
+                    {loading ? 'LOGGING IN...' : 'LOGIN'}
+                  </button>
                 </div>
                 <div className="text-center mt-4">
                   <p>{"Don't"} have an account? <Link to="/register" className="text-danger fw-bold text-decoration-none">Sign Up</Link></p>
