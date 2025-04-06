@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import io from 'socket.io-client';
 
 // Determine backend URL based on environment
 let backendUrl;
@@ -12,12 +11,7 @@ if (import.meta.env.VITE_BACKEND_URL) {
 } else {
   backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
 }
-// Remove trailing slash if present (important for socket.io)
 const BACKEND_URL = backendUrl.replace(/\/$/, '');
-
-const socket = io(BACKEND_URL, {
-  transports: ['polling'] // Keep polling for consistency
-});
 
 function Products({ addToCart }) {
   const [allProducts, setAllProducts] = useState([]); // Raw list from fetch/socket
@@ -31,27 +25,36 @@ function Products({ addToCart }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortOption, setSortOption] = useState('name_asc'); // e.g., 'price_asc', 'price_desc', 'name_asc', 'name_desc'
 
+  // Fetch products function that can be reused
+  const fetchProducts = async () => {
+    try {
+      const productsRes = await fetch(`${BACKEND_URL}/products`);
+      
+      if (!productsRes.ok) throw new Error('Failed to fetch products');
+      
+      const productsData = await productsRes.json();
+      
+      // Filter for actual products (exclude categories/restaurants if they exist in the main products endpoint)
+      const actualProducts = productsData.filter(p => !p.type || p.type === 'product');
+      
+      setAllProducts(actualProducts);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   // Fetch initial data (products and categories)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Ensure slash for fetch
-        const [productsRes, categoriesRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/products`),
-          fetch(`${BACKEND_URL}/products/categories`)
-        ]);
-
-        if (!productsRes.ok) throw new Error('Failed to fetch products');
-        if (!categoriesRes.ok) throw new Error('Failed to fetch categories');
-
-        const productsData = await productsRes.json();
-        const categoriesData = await categoriesRes.json();
-
-        // Filter for actual products (exclude categories/restaurants if they exist in the main products endpoint)
-        const actualProducts = productsData.filter(p => !p.type || p.type === 'product');
+        // Fetch products
+        await fetchProducts();
         
-        setAllProducts(actualProducts);
-        setFilteredProducts(actualProducts); // Initialize filtered list
+        // Fetch categories
+        const categoriesRes = await fetch(`${BACKEND_URL}/products/categories`);
+        if (!categoriesRes.ok) throw new Error('Failed to fetch categories');
+        
+        const categoriesData = await categoriesRes.json();
         setCategories([{ _id: 'all', name: 'All Categories', category: 'all' }, ...categoriesData]); // Add 'All' option
       } catch (err) {
         setError(err.message);
@@ -61,23 +64,15 @@ function Products({ addToCart }) {
     };
 
     fetchData();
-
-    // Socket.io listeners for real-time updates
-    socket.on('product_added', (addedProduct) => {
-      // Add only if it's a product type
-      if (!addedProduct.type || addedProduct.type === 'product') {
-        setAllProducts((prev) => [...prev, addedProduct]);
-      }
-    });
-
-    socket.on('product_deleted', (deletedProductId) => {
-      setAllProducts((prev) => prev.filter(p => p._id !== deletedProductId));
-    });
-
+    
+    // Set up polling for products every 30 seconds
+    const intervalId = setInterval(() => {
+      fetchProducts();
+    }, 30000);
+    
     // Cleanup on unmount
     return () => {
-      socket.off('product_added');
-      socket.off('product_deleted');
+      clearInterval(intervalId);
     };
   }, []);
 
