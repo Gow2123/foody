@@ -1,12 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-// Define API URL directly here as a fallback
-const API_BASE_URL = 'http://localhost:4000';
-const API_PREFIX = '/api';
-
 // Import from api file
-import { API_URL as importedApiUrl } from '../api';
+import { API_URL, authHeader } from '../api';
 
 // Create auth context
 const AuthContext = createContext();
@@ -19,9 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  // Make sure we have a valid API URL
-  const API_URL = importedApiUrl || `${API_BASE_URL}${API_PREFIX}`;
   
   // Log the API URL at initialization
   console.log('AuthContext initialized with API_URL:', API_URL);
@@ -127,7 +120,8 @@ export const AuthProvider = ({ children }) => {
     setUser,
     loading,
     login,
-    logout
+    logout,
+    apiUrl: API_URL
   };
 
   return (

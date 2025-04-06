@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { login, apiUrl } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -26,31 +26,10 @@ const Login = () => {
     }
     
     try {
-      // First attempt to directly call the API to test the connection
-      console.log('API_URL from import:', API_URL);
-      console.log('Testing direct API connection to:', `${API_URL}/user/test`);
-      try {
-        const testResponse = await axios.get(`${API_URL}/user/test`);
-        console.log('API test response:', testResponse.data);
-      } catch (testError) {
-        console.error('API test failed:', testError);
-      }
-      
       setLoading(true);
       console.log('Attempting login with username:', username);
       
-      // Manual login attempt
-      try {
-        console.log('Manual login attempt to:', `${API_URL}/user/login`);
-        const directResponse = await axios.post(`${API_URL}/user/login`, {
-          username,
-          password
-        });
-        console.log('Direct login response:', directResponse.data);
-      } catch (directError) {
-        console.error('Direct login failed:', directError);
-      }
-      
+      // Use the login function from AuthContext
       await login(username, password);
       console.log('Login successful');
       navigate('/');

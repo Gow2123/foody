@@ -1,4 +1,128 @@
+<<<<<<< HEAD
 @import './suby/styles/variables.css';
 @import './suby/styles/global.css';
 
 /* Any additional app-specific styles can go here */
+=======
+:root {
+  /* Define the new color palette */
+  --color-primary: #008080; /* Teal */
+  --color-secondary: #FF6347; /* Tomato */
+  --color-text: #333333; /* Dark Grey */
+  --color-background: #F8F8F8; /* Very Light Grey */
+  --color-surface: #FFFFFF; /* White */
+  --color-border: #E0E0E0; /* Light Grey */
+  --color-link: var(--color-primary);
+  --color-link-hover: #006666; /* Darker Teal */
+  --color-button-bg: var(--color-primary);
+  --color-button-text: var(--color-surface);
+  --color-button-hover-bg: var(--color-link-hover);
+  --color-text-muted: #757575; /* Add a muted text color */
+
+  /* Set default font */
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Apply base colors (Light theme only) */
+  color: var(--color-text);
+  background-color: var(--color-background);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: var(--color-link);
+  text-decoration: none; /* Remove underline by default */
+}
+a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline; /* Add underline on hover */
+}
+
+body {
+  margin: 0;
+  /* display: flex; */ /* Remove centering if App handles layout */
+  /* place-items: center; */
+  min-width: 320px;
+  min-height: 100vh;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit; /* Inherit box-sizing from body */
+}
+
+h1 {
+  font-size: 2.5em; /* Adjusted size */
+  line-height: 1.2;
+  color: var(--color-primary); /* Use primary color for main headings */
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-size: 2em;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin-bottom: 0.4em;
+}
+
+h3 {
+  font-size: 1.5em;
+  line-height: 1.3;
+  color: var(--color-text);
+  margin-bottom: 0.3em;
+}
+
+/* Consistent button styling */
+button,
+.button { /* Add a class for button-like elements (e.g., links styled as buttons) */
+  display: inline-block; /* Ensure proper padding application */
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  cursor: pointer;
+  transition: background-color 0.25s, border-color 0.25s;
+  text-align: center;
+  text-decoration: none; /* Remove underline if applied to link styled as button */
+}
+button:hover,
+.button:hover {
+  background-color: var(--color-button-hover-bg);
+  border-color: var(--color-button-hover-bg);
+  color: var(--color-button-text); /* Ensure text color remains on hover */
+  text-decoration: none;
+}
+/* Remove default focus outline for buttons, use custom if needed */
+button:focus,
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Basic card styling */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+/* Utility class for muted text */
+.text--muted {
+  color: var(--color-text-muted);
+}
+>>>>>>> cf1045ebb630a0c60ae2426bae9db992338c77f4
