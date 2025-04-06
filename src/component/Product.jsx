@@ -2,7 +2,16 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+// Determine backend URL based on environment
+let backendUrl;
+if (import.meta.env.VITE_BACKEND_URL) {
+  backendUrl = import.meta.env.VITE_BACKEND_URL;
+} else if (import.meta.env.DEV) {
+  backendUrl = 'http://localhost:3000'; // Default for local development
+} else {
+  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
+}
+const BACKEND_URL = backendUrl.replace(/\/$/, '');
 
 function Product({ addToCart }) {
   const { id } = useParams();
@@ -14,6 +23,7 @@ function Product({ addToCart }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        // Ensure slash for fetch
         const response = await fetch(`${BACKEND_URL}/products/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product');

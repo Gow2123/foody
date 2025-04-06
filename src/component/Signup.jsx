@@ -3,7 +3,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+// Determine backend URL based on environment
+let backendUrl;
+if (import.meta.env.VITE_BACKEND_URL) {
+  backendUrl = import.meta.env.VITE_BACKEND_URL;
+} else if (import.meta.env.DEV) {
+  backendUrl = 'http://localhost:3000'; // Default for local development
+} else {
+  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
+}
+const BACKEND_URL = backendUrl.replace(/\/$/, '');
 
 function Signup({ setIsLoggedIn }) {
   const navigate = useNavigate();

@@ -3,7 +3,18 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import io from 'socket.io-client';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://foody-backend0.vercel.app';
+// Determine backend URL based on environment
+let backendUrl;
+if (import.meta.env.VITE_BACKEND_URL) {
+  backendUrl = import.meta.env.VITE_BACKEND_URL;
+} else if (import.meta.env.DEV) {
+  backendUrl = 'http://localhost:3000'; // Default for local development
+} else {
+  backendUrl = 'https://foody-backend0.vercel.app'; // Default for production build
+}
+// Remove trailing slash if present (important for socket.io)
+const BACKEND_URL = backendUrl.replace(/\/$/, '');
+
 const socket = io(BACKEND_URL, {
   transports: ['polling'] // Keep polling for consistency
 });
@@ -24,6 +35,7 @@ function Products({ addToCart }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Ensure slash for fetch
         const [productsRes, categoriesRes] = await Promise.all([
           fetch(`${BACKEND_URL}/products`),
           fetch(`${BACKEND_URL}/products/categories`)
