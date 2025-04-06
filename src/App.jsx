@@ -3,18 +3,35 @@ import './App.css'
 import Navbar from './component/Navbar'
 import Footer from './component/Footer'
 import Home from './component/Home'
-import Restaurants from './component/Restaurants'
-import Categories from './component/Categories'
-import MyOrders from './component/MyOrders'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import Product from './component/Product'
+
+// Eagerly loaded components (critical for initial render)
 import Cart from './component/Cart'
-import RestaurantDetail from './component/RestaurantDetail'
-import CategoryDetail from './component/CategoryDetail'
-import Signup from './component/Signup'
 import Login from './component/Login'
-import Products from './component/Products'
+import Signup from './component/Signup'
+
+// Lazy loaded components (can be loaded after initial render)
+const Restaurants = lazy(() => import('./component/Restaurants'))
+const Categories = lazy(() => import('./component/Categories'))
+const MyOrders = lazy(() => import('./component/MyOrders'))
+const Product = lazy(() => import('./component/Product'))
+const RestaurantDetail = lazy(() => import('./component/RestaurantDetail'))
+const CategoryDetail = lazy(() => import('./component/CategoryDetail'))
+const Products = lazy(() => import('./component/Products'))
+const AllProducts = lazy(() => import('./component/AllProducts'))
+
+// Loading component for suspense
+const PageLoading = () => (
+  <div className="container mt-5 pt-5">
+    <div className="text-center">
+      <div className="spinner-border text-success" role="status">
+        <span className="visually-hidden">Loading page...</span>
+      </div>
+      <p className="mt-3">Loading content...</p>
+    </div>
+  </div>
+);
 
 function App() {  
   const [cart, setCart] = useState([])
@@ -30,6 +47,31 @@ function App() {
     }
 
     window.addEventListener('scroll', handleScroll)
+    
+    // Prefetch lazy components after the page has loaded
+    const prefetchComponents = async () => {
+      try {
+        // Use setTimeout to defer prefetching until after initial page load
+        setTimeout(async () => {
+          if (navigator.connection && navigator.connection.saveData) {
+            // Skip prefetching if the user has data-saving mode enabled
+            return;
+          }
+          
+          const componentsToPreload = [
+            import('./component/Restaurants'),
+            import('./component/Categories')
+          ];
+          
+          await Promise.all(componentsToPreload);
+        }, 2000);
+      } catch (error) {
+        console.error('Error prefetching components:', error);
+      }
+    };
+    
+    prefetchComponents();
+    
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -81,60 +123,63 @@ function App() {
         )}
 
         <div className="main-content flex-grow-1 mt-5 pt-4">
-          <Routes>
-            <Route path="/" element={<Home addToCart={addToCart} />} />
-            <Route path="/restaurants" element={<Restaurants />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/product/:id" element={<Product addToCart={addToCart} />} />
-            <Route path="/restaurant/:id" element={<RestaurantDetail addToCart={addToCart} />} />
-            <Route path="/category/:id" element={<CategoryDetail addToCart={addToCart} />} />
-            <Route 
-              path="/cart" 
-              element={
-                isLoggedIn ? (
-                  <Cart
-                    cart={cart}
-                    removeFromCart={removeFromCart}
-                    updateQuantity={updateQuantity}
-                  />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              } 
-            />
-            <Route 
-              path="/myorders" 
-              element={
-                isLoggedIn ? (
-                  <MyOrders />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              } 
-            />
-            <Route 
-              path="/login" 
-              element={
-                isLoggedIn ? (
-                  <Navigate to="/" replace />
-                ) : (
-                  <Login setIsLoggedIn={setIsLoggedIn} />
-                )
-              } 
-            />
-            <Route 
-              path="/register" 
-              element={
-                isLoggedIn ? (
-                  <Navigate to="/" replace />
-                ) : (
-                  <Signup setIsLoggedIn={setIsLoggedIn} />
-                )
-              } 
-            />
-            <Route path="/products" element={<Products addToCart={addToCart} />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={<PageLoading />}>
+            <Routes>
+              <Route path="/" element={<Home addToCart={addToCart} />} />
+              <Route path="/restaurants" element={<Restaurants />} />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/product/:id" element={<Product addToCart={addToCart} />} />
+              <Route path="/restaurant/:id" element={<RestaurantDetail addToCart={addToCart} />} />
+              <Route path="/category/:id" element={<CategoryDetail addToCart={addToCart} />} />
+              <Route path="/products" element={<Products addToCart={addToCart} />} />
+              <Route path="/all-products" element={<AllProducts addToCart={addToCart} />} />
+              <Route 
+                path="/cart" 
+                element={
+                  isLoggedIn ? (
+                    <Cart
+                      cart={cart}
+                      removeFromCart={removeFromCart}
+                      updateQuantity={updateQuantity}
+                    />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                } 
+              />
+              <Route 
+                path="/myorders" 
+                element={
+                  isLoggedIn ? (
+                    <MyOrders />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                } 
+              />
+              <Route 
+                path="/login" 
+                element={
+                  isLoggedIn ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <Login setIsLoggedIn={setIsLoggedIn} />
+                  )
+                } 
+              />
+              <Route 
+                path="/register" 
+                element={
+                  isLoggedIn ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <Signup setIsLoggedIn={setIsLoggedIn} />
+                  )
+                } 
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </div>
         <Footer />
       </div>
