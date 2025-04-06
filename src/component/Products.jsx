@@ -48,7 +48,7 @@ function Products({ addToCart }) {
         }
       }
 
-      const response = await fetch(`${BACKEND_URL}/products`, {
+      const response = await fetch(`${BACKEND_URL}/api/products`, {
         cache: 'default',
         headers: {
           'Accept': 'application/json'
@@ -89,7 +89,7 @@ function Products({ addToCart }) {
         return;
       }
       
-      const response = await fetch(`${BACKEND_URL}/products/categories`, {
+      const response = await fetch(`${BACKEND_URL}/api/categories`, {
         cache: 'default',
         headers: {
           'Accept': 'application/json'

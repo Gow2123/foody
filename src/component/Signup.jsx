@@ -36,8 +36,8 @@ function Signup({ setIsLoggedIn }) {
     }
 
     try {
-      console.log(`Attempting registration at: ${BACKEND_URL}/register`);
-      const response = await fetch(`${BACKEND_URL}/register`, {
+      console.log(`Attempting registration at: ${BACKEND_URL}/api/register`);
+      const response = await fetch(`${BACKEND_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

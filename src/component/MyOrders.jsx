@@ -23,7 +23,7 @@ function MyOrders() {
         return;
       }
 
-      const response = await fetch(`${BACKEND_URL}/orders`, {
+      const response = await fetch(`${BACKEND_URL}/api/orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -50,7 +50,7 @@ function MyOrders() {
     setDeleteLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${BACKEND_URL}/orders/${orderId}`, {
+      const response = await fetch(`${BACKEND_URL}/api/orders/${orderId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
