@@ -1,5 +1,7 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
+  "installCommand": "npm install --no-optional --legacy-peer-deps",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
   "cleanUrls": true,
@@ -13,5 +15,10 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
       ]
     }
-  ]
+  ],
+  "env": {
+    "ROLLUP_SKIP_NODE_RESOLVE": "true",
+    "ROLLUP_NATIVE_MODULES": "false",
+    "NODE_OPTIONS": "--no-experimental-fetch"
+  }
 }
