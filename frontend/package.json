@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "ROLLUP_SKIP_NODE_RESOLVE=true vite build",
-    "vercel-build": "npm ci --omit=optional && ROLLUP_SKIP_NODE_RESOLVE=true vite build",
+    "prebuild": "node ./rollup-fix.js && node ./commonjs-compat.cjs",
+    "build": "ROLLUP_SKIP_NODE_RESOLVE=true ROLLUP_NATIVE_MODULES=false NODE_OPTIONS=--no-experimental-fetch vite build --config vite.config.js",
+    "vercel-build": "node ./vercel-build.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -32,5 +33,11 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "overrides": {
+    "rollup": {
+      "@rollup/rollup-linux-x64-gnu": "4.9.6",
+      "@rollup/rollup-linux-x64-musl": "4.9.6"
+    }
   }
 }
