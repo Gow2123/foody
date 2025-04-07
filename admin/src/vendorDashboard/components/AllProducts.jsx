@@ -10,7 +10,7 @@ const AllProducts = () => {
 
     const productsHandler = async() => {
         setLoading(true);
-        const firmId = localStorage.getItem('firmId');
+            const firmId = localStorage.getItem('firmId');
         const token = localStorage.getItem('loginToken');
         
         setDebugInfo(`API URL: ${API_URL}\nFirmId: ${firmId || 'Not found'}\nToken: ${token ? 'Present' : 'Missing'}`);
@@ -27,11 +27,11 @@ const AllProducts = () => {
             console.log(`Fetching products from: ${API_URL}/product/${firmId}/products`);
             setDebugInfo(prev => prev + `\nFetching from: ${API_URL}/product/${firmId}/products`);
             
-            const response = await fetch(`${API_URL}/product/${firmId}/products`);
+                const response = await fetch(`${API_URL}/product/${firmId}/products`);
             console.log("Products response status:", response.status);
             setDebugInfo(prev => prev + `\nResponse status: ${response.status}`);
             
-            const newProductsData = await response.json();
+                const newProductsData = await response.json();
             console.log("Products data:", newProductsData);
             setDebugInfo(prev => prev + `\nData: ${JSON.stringify(newProductsData).substring(0, 100)}...`);
             
@@ -61,13 +61,13 @@ const AllProducts = () => {
         if (confirm("Are you sure you want to delete this product?")) {
             try {
                 const response = await fetch(`${API_URL}/product/${productId}`, {
-                    method: 'DELETE'
+                            method: 'DELETE'
                 });
                 if (response.ok) {
                     setProducts(products.filter(product => product._id !== productId));
                     alert("Product deleted successfully");
-                }
-            } catch (error) {
+                    }
+                } catch (error) {
                 console.error('Failed to delete product', error);
                 alert('Failed to delete product');
             }
@@ -118,8 +118,8 @@ const AllProducts = () => {
         );
     }
     
-    return (
-        <div className='productSection'>
+  return (
+    <div className='productSection'>
             {(!products || products.length === 0) ? (
                 <div>
                     <p>No products added yet. Add your first product from the "Add Product" section.</p>
@@ -132,25 +132,25 @@ const AllProducts = () => {
                 </div>
             ) : (
                 <div>
-                    <table className="product-table">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Price</th>
-                                <th>Image</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <table className="product-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Image</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
                             {products.map((item) => (
-                                <tr key={item._id}>
-                                    <td>{item.productName}</td>
-                                    <td>₹{item.price}</td>
+                                    <tr key={item._id}>
+                                        <td>{item.productName}</td>
+                                        <td>₹{item.price}</td>
                                     <td>
                                         {item.image && (
                                             <img 
                                                 src={`${API_URL}/uploads/${item.image}`} 
-                                                alt={item.productName}
+                                            alt={item.productName}
                                                 style={{ width: '50px', height:'50px' }}
                                             />
                                         )}
@@ -158,15 +158,15 @@ const AllProducts = () => {
                                     <td>
                                         <button 
                                             onClick={() => deleteProductById(item._id)}
-                                            className='deleteBtn'
+                                        className='deleteBtn'
                                         >
                                             Delete
                                         </button>
                                     </td>
-                                </tr>
+                                    </tr>
                             ))}
-                        </tbody>
-                    </table>
+                </tbody>
+            </table>
                     <div className="debugInfo" style={{fontSize: '12px', marginTop: '10px', color: '#666', textAlign: 'left'}}>
                         <h4>Debug Information:</h4>
                         {debugInfo.split('\n').map((line, i) => (
@@ -174,8 +174,8 @@ const AllProducts = () => {
                         ))}
                     </div>
                 </div>
-            )}
-        </div>
+         )}
+    </div>
     );
 }
 
