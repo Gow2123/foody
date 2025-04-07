@@ -2,23 +2,78 @@
 
 /* Global styles */
 :root {
+  /* Primary Colors */
   --color-primary: #4361ee;
+  --color-primary-light: #5e79ff;
   --color-primary-dark: #3a56d4;
+  --color-primary-bg: rgba(67, 97, 238, 0.05);
+  
+  /* Secondary Colors */
   --color-secondary: #ff6b6b;
-  --color-text: #333;
-  --color-text-light: #666;
+  --color-secondary-light: #ff8a8a;
+  --color-secondary-dark: #e74c3c;
+  
+  /* Accent Colors */
+  --color-accent: #00b894;
+  --color-accent-light: #00d1a7;
+  --color-accent-dark: #00a182;
+  
+  /* Neutral Colors */
+  --color-bg: #f8f9fa;
+  --color-bg-light: #ffffff;
+  --color-bg-dark: #edf0f7;
+  
+  /* Text Colors */
+  --color-text: #2d3748;
+  --color-text-light: #4a5568;
+  --color-text-muted: #718096;
+  
+  /* Status Colors */
   --color-success: #2ecc71;
   --color-warning: #f39c12;
   --color-danger: #e74c3c;
   --color-info: #3498db;
+  
+  /* Border & Radius */
+  --border-color: #e2e8f0;
+  --border-color-dark: #cbd5e0;
+  --border-radius-sm: 4px;
   --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-family);
   color: var(--color-text);
   line-height: 1.6;
-  background-color: #f8f9fa;
+  background-color: var(--color-bg);
   margin: 0;
   padding: 0;
 }
