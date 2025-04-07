@@ -12,6 +12,7 @@ const NavBar = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -33,6 +34,7 @@ const NavBar = () => {
     logout();
     navigate('/');
     setMobileMenuOpen(false);
+    setDropdownOpen(false);
   };
 
   const handleLogin = () => {
@@ -42,6 +44,10 @@ const NavBar = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
   };
 
   return (
@@ -68,10 +74,16 @@ const NavBar = () => {
             {isLoggedIn && (
               <>
                 <li className={location.pathname === '/cart' ? 'active' : ''}>
-                  <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>My Cart</Link>
+                  <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>
+                    <span className="nav-icon">🛒</span>
+                    My Cart
+                  </Link>
                 </li>
                 <li className={location.pathname === '/orders' ? 'active' : ''}>
-                  <Link to="/orders" onClick={() => setMobileMenuOpen(false)}>My Orders</Link>
+                  <Link to="/orders" onClick={() => setMobileMenuOpen(false)}>
+                    <span className="nav-icon">📋</span>
+                    My Orders
+                  </Link>
                 </li>
               </>
             )}
@@ -86,20 +98,26 @@ const NavBar = () => {
           <div className="navbar-auth">
             {isLoggedIn ? (
               <div className="user-dropdown">
-                <div className="user-info">
+                <div className="user-info" onClick={toggleDropdown}>
                   <div className="user-avatar">
                     {user?.username?.charAt(0) || 'U'}
                   </div>
                   <span className="user-name">{user?.username || 'User'}</span>
                   <span className="dropdown-arrow">▼</span>
                 </div>
-                <div className="dropdown-menu">
-                  <Link to="/profile" className="dropdown-item">My Profile</Link>
-                  <Link to="/orders" className="dropdown-item">My Orders</Link>
-                  <Link to="/favorites" className="dropdown-item">Favorites</Link>
+                <div className={`dropdown-menu ${dropdownOpen ? 'active' : ''}`}>
+                  <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    <span className="dropdown-icon">👤</span> My Profile
+                  </Link>
+                  <Link to="/orders" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    <span className="dropdown-icon">📋</span> My Orders
+                  </Link>
+                  <Link to="/cart" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    <span className="dropdown-icon">🛒</span> My Cart
+                  </Link>
                   <div className="dropdown-divider"></div>
                   <button onClick={handleLogout} className="dropdown-item logout-item">
-                    Logout
+                    <span className="dropdown-icon">🚪</span> Logout
                   </button>
                 </div>
               </div>

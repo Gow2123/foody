@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './suby/contexts/AuthContext'
 import NavBar from './suby/components/NavBar'
 import LandingPage from './suby/pages/LandingPage'
-import Login from './suby/pages/Login'
-import Signup from './suby/components/auth/Signup'
+import AuthPage from './suby/pages/AuthPage'
 import RestaurantsPage from './suby/pages/RestaurantsPage'
 import NotFound from './suby/pages/NotFound'
 import ProtectedRoute from './suby/components/ProtectedRoute'
@@ -16,6 +15,7 @@ import './App.css'
 // Placeholder components for pages not yet implemented
 const AboutPage = () => <div className="page-content"><h1>About Us</h1></div>;
 const ContactPage = () => <div className="page-content"><h1>Contact Us</h1></div>;
+const MenuPage = () => <div className="page-content"><h1>Our Menu</h1></div>;
 
 const App = () => {
   return (
@@ -26,9 +26,9 @@ const App = () => {
           <main className="main-content">
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/auth" element={<Login />} />
-              <Route path="/register" element={<Signup />} />
+              <Route path="/auth" element={<AuthPage />} />
               <Route path="/restaurants" element={<RestaurantsPage />} />
+              <Route path="/menu" element={<MenuPage />} />
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <ProfilePage />
