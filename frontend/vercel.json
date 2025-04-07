@@ -1,22 +1,8 @@
 {
-  "version": 2,
-  "framework": "vite",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/dist/assets/$1"
-    },
-    {
-      "src": "/.*",
-      "dest": "/dist/index.html"
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/(.*)",
@@ -27,10 +13,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
       ]
     }
-  ],
-  "env": {
-    "ROLLUP_SKIP_NODE_RESOLVE": "true",
-    "ROLLUP_NATIVE_MODULES": "false",
-    "NODE_OPTIONS": "--no-experimental-fetch"
-  }
+  ]
 }
