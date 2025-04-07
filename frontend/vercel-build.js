@@ -9,63 +9,86 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-console.log('🚀 Starting Vercel custom build process');
+console.log('Starting Vercel build script...');
 
-// Check if we're in a Vercel environment
-const isVercel = process.env.VERCEL === '1';
-console.log(`Detected environment: ${isVercel ? 'Vercel' : 'Local'}`);
+// Function to safely run a command
+function runCommand(cmd) {
+  try {
+    console.log(`Running: ${cmd}`);
+    const output = execSync(cmd, { encoding: 'utf8' });
+    console.log(output);
+    return true;
+  } catch (error) {
+    console.error(`Error executing command: ${cmd}`);
+    console.error(error.message);
+    return false;
+  }
+}
 
-try {
-  // Recursively find and rename problematic native modules 
-  function findAndDisableNativeModules(directory) {
-    if (!fs.existsSync(directory)) return;
+// Fix Rollup native module issue
+function fixRollupIssue() {
+  console.log('Fixing Rollup native module issue...');
+  
+  try {
+    // Run our prebuild script
+    runCommand('node ./rollup-fix.js');
+    runCommand('node ./commonjs-compat.cjs');
     
-    const files = fs.readdirSync(directory);
+    // Ensure Rollup doesn't try to use native modules
+    process.env.ROLLUP_SKIP_NODE_RESOLVE = 'true';
+    process.env.ROLLUP_NATIVE_MODULES = 'false';
+    process.env.NODE_OPTIONS = '--no-experimental-fetch';
     
-    for (const file of files) {
-      const fullPath = path.join(directory, file);
-      
-      // Skip node_modules inside node_modules
-      if (fullPath.includes('node_modules/node_modules')) continue;
-      
-      const stats = fs.statSync(fullPath);
-      
-      if (stats.isDirectory()) {
-        // Process subdirectories recursively
-        findAndDisableNativeModules(fullPath);
-      } else if (file === 'native.js' && fullPath.includes('rollup/dist')) {
-        console.log(`Found problematic file: ${fullPath}`);
-        
-        // Patch the file directly
-        const content = fs.readFileSync(fullPath, 'utf8');
-        const patched = content.replace(
-          /function\s+requireWithFriendlyError[^}]*}/s,
-          'function requireWithFriendlyError() { throw new Error("Native modules disabled"); }'
-        );
-        
-        fs.writeFileSync(fullPath, patched);
-        console.log(`✅ Patched ${fullPath}`);
-      }
+    // Run the build
+    console.log('Starting build...');
+    return runCommand('npm run build');
+  } catch (error) {
+    console.error('Failed to fix Rollup issue or build:', error);
+    return false;
+  }
+}
+
+// Clean up node_modules and reinstall if needed
+function cleanAndReinstall() {
+  console.log('Cleaning node_modules and reinstalling dependencies...');
+  
+  try {
+    // Skip if we're in a Vercel environment (let Vercel handle installation)
+    if (process.env.VERCEL) {
+      console.log('Running in Vercel environment, skipping manual reinstall');
+      return true;
     }
+    
+    // Otherwise, clean and reinstall
+    if (fs.existsSync('node_modules')) {
+      fs.rmSync('node_modules', { recursive: true, force: true });
+    }
+    
+    if (fs.existsSync('package-lock.json')) {
+      fs.unlinkSync('package-lock.json');
+    }
+    
+    return runCommand('npm install --no-optional');
+  } catch (error) {
+    console.error('Failed to clean and reinstall:', error);
+    return false;
+  }
+}
+
+// Run the build process
+function main() {
+  // Skip cleanup in Vercel environment
+  if (!process.env.VERCEL) {
+    cleanAndReinstall();
   }
   
-  // Install dependencies without optional packages
-  console.log('📦 Installing dependencies without optional packages...');
-  execSync('npm install --no-optional', { stdio: 'inherit' });
+  // Always fix rollup and run build
+  if (!fixRollupIssue()) {
+    console.error('Build failed!');
+    process.exit(1);
+  }
   
-  // Find and disable problematic modules
-  console.log('🔍 Finding and disabling problematic native modules...');
-  findAndDisableNativeModules(path.join(process.cwd(), 'node_modules'));
-  
-  // Run the build
-  console.log('🏗️ Running build...');
-  execSync(
-    'ROLLUP_SKIP_NODE_RESOLVE=true ROLLUP_NATIVE_MODULES=false NODE_OPTIONS=--no-experimental-fetch npx vite build --config vite.config.js', 
-    { stdio: 'inherit' }
-  );
-  
-  console.log('✅ Build completed successfully!');
-} catch (error) {
-  console.error('❌ Build failed:', error.message);
-  process.exit(1);
-} 
+  console.log('Build completed successfully!');
+}
+
+main(); 

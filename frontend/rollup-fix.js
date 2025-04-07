@@ -12,17 +12,26 @@ try {
     // Backup the original file
     fs.copyFileSync(nativeFilePath, `${nativeFilePath}.backup`);
 
-    // Read the file content
-    let fileContent = fs.readFileSync(nativeFilePath, 'utf8');
+    // Replace the entire file with a version that doesn't try to load native modules
+    const patchedContent = `
+// This is a patched version that doesn't try to load native modules
+const stubInterface = {
+  isNativeEsmAvailable: false,
+  getDefaultExternal() { return []; },
+  getDefaultNativeExternal() { return []; },
+  getMangleCache() { return null; },
+  getGlobalExternal() { return []; },
+  needsLegacyFunctionThis() { return true; }
+};
 
-    // Replace the problematic code that tries to load native modules
-    fileContent = fileContent.replace(
-      /try\s*{[\s\S]*?requireWithFriendlyError[\s\S]*?}\s*catch\s*\([^)]*\)\s*{/,
-      'try { throw new Error("Skipping native module"); } catch (err) {'
-    );
+// Export a stub interface
+exports.getDefaultBuildOptions = () => ({});
+exports.getNativeInterface = () => stubInterface;
+exports.normalizeOptions = options => options;
+`;
 
-    // Write the modified content back to the file
-    fs.writeFileSync(nativeFilePath, fileContent);
+    // Write the patched content
+    fs.writeFileSync(nativeFilePath, patchedContent);
 
     console.log('Successfully patched Rollup native.js file.');
   } else {
