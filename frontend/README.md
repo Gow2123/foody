@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-=======
 # Foody - Customer Frontend
 
 This repository contains the customer-facing frontend for the Foody application, a modern, responsive food delivery platform built with React.
@@ -99,4 +89,3 @@ foody/
 
 - **Frontend:** https://foody-mern.vercel.app/
 - **Backend:** https://foody-backend0.vercel.app/
->>>>>>> cf1045ebb630a0c60ae2426bae9db992338c77f4
