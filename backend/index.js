@@ -9,12 +9,14 @@ const userRoutes = require('./routes/userRoutes');
 const cors = require('cors');
 const path = require('path')
 
-const app = express()
-
+// Initialize express app
+const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Load environment variables
 dotEnv.config();
-// Configure CORS to explicitly allow requests from your frontend and admin apps
+
+// Configure CORS
 const allowedOrigins = [
   // Local development URLs
   'http://localhost:3000',
@@ -52,61 +54,95 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Connect to MongoDB - with error handling for serverless environment
+// Connect to MongoDB - with retry logic and error handling for serverless
 const connectDB = async () => {
   if (mongoose.connection.readyState !== 1) {
     try {
-      await mongoose.connect(process.env.MONGO_URI);
+      const mongoUri = process.env.MONGO_URI;
+      if (!mongoUri) {
+        throw new Error('MONGO_URI environment variable is not defined');
+      }
+      
+      console.log('Attempting MongoDB connection...');
+      await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+        socketTimeoutMS: 45000, // Close sockets after 45s
+      });
       console.log("MongoDB connected successfully!");
     } catch (error) {
       console.error("MongoDB connection error:", error);
-      // Don't crash the app in serverless environment
+      // Don't crash in production, but do in development to catch issues
       if (process.env.NODE_ENV !== 'production') {
         throw error;
       }
     }
   }
 };
-// Connect for traditional server
-connectDB();
 
+// Body parser middleware
 app.use(bodyParser.json());
 
 // Health check endpoint
-app.get('/status', (req, res) => {
+app.get('/status', async (req, res) => {
+  try {
+    // Try to connect if not already connected
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
+    
     res.json({
-        status: 'ok',
-        time: new Date().toISOString(),
-        mongoConnection: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-        environment: process.env.NODE_ENV || 'development'
+      status: 'ok',
+      time: new Date().toISOString(),
+      mongoConnection: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+      environment: process.env.NODE_ENV || 'development'
     });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: error.message,
+      time: new Date().toISOString(),
+      mongoConnection: 'failed',
+      environment: process.env.NODE_ENV || 'development'
+    });
+  }
 });
 
 // API routes - make them available both with and without /api prefix
+// Vendor routes
 app.use('/api/vendor', vendorRoutes);
 app.use('/vendor', vendorRoutes);
 
+// Firm routes
 app.use('/api/firm', firmRoutes);
 app.use('/firm', firmRoutes);
 
+// Product routes
 app.use('/api/product', productRoutes);
 app.use('/product', productRoutes);
 
+// User routes
 app.use('/api/user', userRoutes);
 app.use('/user', userRoutes);
 
-app.use('/uploads', express.static('uploads'));
+// Serve static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Default route
 app.get('/', (req, res) => {
-    res.send("<h1>Welcome to Foody API</h1>");
+  res.send("<h1>Welcome to Foody API</h1>");
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  res.status(500).json({ 
+    error: 'Something went wrong!',
+    message: err.message || 'Unknown error'
+  });
 });
+
+// Connect to MongoDB when starting the server
+connectDB();
 
 // Start server if it's a direct Node.js execution (not being required as a module)
 if (require.main === module) {

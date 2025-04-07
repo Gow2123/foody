@@ -4,9 +4,9 @@
     "description": "Backend server for Foody app",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon run dev",
+        "dev": "nodemon index.js",
         "start": "node index.js",
-        "vercel-build": "echo Vercel build step"
+        "vercel-build": "echo 'Vercel build step for backend'"
     },
     "keywords": [],
     "author": "Kalyan",
@@ -26,6 +26,6 @@
         "nodemon": "^3.1.0"
     },
     "engines": {
-        "node": ">=16.0.0"
+        "node": "18.x"
     }
 }
