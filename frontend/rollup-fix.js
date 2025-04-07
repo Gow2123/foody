@@ -2,6 +2,38 @@
 const fs = require('fs');
 const path = require('path');
 
+// Create stub modules for native dependencies
+const modulesToStub = [
+  '@rollup/rollup-linux-x64-gnu',
+  '@rollup/rollup-linux-x64-musl',
+  '@rollup/rollup-win32-x64-msvc',
+  '@rollup/rollup-darwin-x64',
+  '@rollup/rollup-darwin-arm64'
+];
+
+// Create node_modules directory if it doesn't exist
+const nodeModulesDir = path.join(process.cwd(), 'node_modules');
+if (!fs.existsSync(nodeModulesDir)) {
+  fs.mkdirSync(nodeModulesDir, { recursive: true });
+}
+
+// Create empty modules for all native dependencies
+modulesToStub.forEach(moduleName => {
+  const moduleDir = path.join(nodeModulesDir, moduleName);
+  if (!fs.existsSync(moduleDir)) {
+    fs.mkdirSync(moduleDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(moduleDir, 'index.js'), 
+      'module.exports = {};'
+    );
+    fs.writeFileSync(
+      path.join(moduleDir, 'package.json'), 
+      JSON.stringify({ name: moduleName, version: '3.29.4', main: 'index.js' })
+    );
+    console.log(`Created stub module for ${moduleName}`);
+  }
+});
+
 // Path to the problematic Rollup native module file
 const nativeFilePath = path.join(process.cwd(), 'node_modules', 'rollup', 'dist', 'native.js');
 

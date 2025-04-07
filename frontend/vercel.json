@@ -6,7 +6,7 @@
       "use": "@vercel/node",
       "config": {
         "installCommand": "npm ci --omit=optional --no-audit --no-fund",
-        "buildCommand": "npm run build"
+        "buildCommand": "node rollup-fix.js && node commonjs-compat.cjs && ROLLUP_SKIP_NODE_RESOLVE=true ROLLUP_NATIVE_MODULES=false NODE_OPTIONS=--no-experimental-fetch vite build"
       }
     }
   ],

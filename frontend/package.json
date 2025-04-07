@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "preinstall": "node -e \"try { require('fs').writeFileSync('./empty-module.js', 'module.exports = {};'); } catch (e) { console.error(e); }\"",
     "dev": "vite",
     "prebuild": "node ./rollup-fix.js && node ./commonjs-compat.cjs",
     "build": "ROLLUP_SKIP_NODE_RESOLVE=true ROLLUP_NATIVE_MODULES=false NODE_OPTIONS=--no-experimental-fetch vite build",
