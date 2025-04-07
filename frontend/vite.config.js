@@ -15,6 +15,11 @@ export default defineConfig({
         '@rollup/rollup-darwin-x64',
         '@rollup/rollup-darwin-arm64'
       ],
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
+        tryCatchDeoptimization: false
+      },
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom']

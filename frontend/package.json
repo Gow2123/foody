@@ -7,8 +7,8 @@
     "preinstall": "node -e \"try { require('fs').writeFileSync('./empty-module.js', 'module.exports = {};'); } catch (e) { console.error(e); }\"",
     "dev": "vite",
     "prebuild": "node ./rollup-fix.js && node ./commonjs-compat.cjs",
-    "build": "ROLLUP_SKIP_NODE_RESOLVE=true ROLLUP_NATIVE_MODULES=false NODE_OPTIONS=--no-experimental-fetch vite build",
-    "vercel-build": "npm run prebuild && npm run build",
+    "build": "node build.mjs",
+    "vercel-build": "node build.mjs",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
