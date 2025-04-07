@@ -52,9 +52,23 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB connected successfully!"))
-    .catch((error) => console.log(error))
+// Connect to MongoDB - with error handling for serverless environment
+const connectDB = async () => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await mongoose.connect(process.env.MONGO_URI);
+      console.log("MongoDB connected successfully!");
+    } catch (error) {
+      console.error("MongoDB connection error:", error);
+      // Don't crash the app in serverless environment
+      if (process.env.NODE_ENV !== 'production') {
+        throw error;
+      }
+    }
+  }
+};
+// Connect for traditional server
+connectDB();
 
 app.use(bodyParser.json());
 
@@ -63,7 +77,8 @@ app.get('/status', (req, res) => {
     res.json({
         status: 'ok',
         time: new Date().toISOString(),
-        mongoConnection: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+        mongoConnection: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+        environment: process.env.NODE_ENV || 'development'
     });
 });
 
@@ -87,6 +102,18 @@ app.get('/', (req, res) => {
     res.send("<h1>Welcome to Foody API</h1>");
 });
 
-app.listen(PORT, () => {
-    console.log(`server started and running at ${PORT}`);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
+
+// Start server if it's a direct Node.js execution (not being required as a module)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server started and running at ${PORT}`);
+  });
+}
+
+// Export for serverless functions
+module.exports = app;

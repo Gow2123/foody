@@ -1,21 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/node",
-      "config": {
-        "prebuild": "echo Skip native build which causes errors",
-        "buildCommand": "npm ci --ignore-scripts && npm run build",
-        "outputDirectory": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
-    }
+  "buildCommand": "cd frontend && npm ci --ignore-scripts && npm run build",
+  "installCommand": "echo Skipping root install",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
     {
@@ -27,8 +17,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
       ]
     }
-  ],
-  "env": {
-    "VITE_API_URL": "https://foody-backend0.vercel.app"
-  }
-}
+  ]
+} 
