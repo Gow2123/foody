@@ -164,15 +164,7 @@ const Login = ({showWelcomeHandler, showRegisterHandler}) => {
     <div className="loginSection">
       {loading && (
         <div className="loaderSection">
-          <ThreeCircles
-            visible={loading}
-            height={100}
-            width={100}
-            color="#4fa94d"
-            ariaLabel="three-circles-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-          />
+          <Loader />
           <p>Login in process... Please wait</p>
           <div className="debugInfo" style={{fontSize: '12px', marginTop: '10px', color: '#666'}}>
             {debugInfo.split('\n').map((line, i) => (
