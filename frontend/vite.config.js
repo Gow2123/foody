@@ -22,14 +22,17 @@ export default defineConfig({
       },
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom']
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          bootstrap: ['bootstrap']
         }
       }
     },
     commonjsOptions: {
       transformMixedEsModules: true,
       include: [/node_modules/]
-    }
+    },
+    chunkSizeWarningLimit: 1000,
+    emptyOutDir: true
   },
   resolve: {
     alias: {
@@ -42,7 +45,6 @@ export default defineConfig({
     host: true
   },
   optimizeDeps: {
-    disabled: false,
     exclude: [
       '@rollup/rollup-linux-x64-gnu',
       '@rollup/rollup-linux-x64-musl',
